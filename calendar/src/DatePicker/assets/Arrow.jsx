@@ -1,6 +1,7 @@
 import React from 'react'
+import { withTheme } from 'styled-components'
 
-function Arrow({ type = 'left' }) {
+function Arrow({ type = 'left', theme }) {
     return (
         <svg
             width="10"
@@ -12,7 +13,7 @@ function Arrow({ type = 'left' }) {
         >
             <path
                 d="M8 2L2 8L8 14"
-                stroke="#929292"
+                stroke={theme.colors.light['grey-2']}
                 stroke-width="3"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -21,4 +22,4 @@ function Arrow({ type = 'left' }) {
     )
 }
 
-export default Arrow
+export default withTheme(Arrow)

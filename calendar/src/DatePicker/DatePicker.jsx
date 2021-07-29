@@ -9,7 +9,7 @@ const DatePickerWrapper = styled('div')({
     boxSizing: 'border-box',
     width: '245px',
     height: 'auto',
-    backgroundColor: '#ffffff',
+    backgroundColor: (props) => props.theme.colors.light.bg,
 })
 
 const DatePickerHeader = styled('div')({
@@ -17,6 +17,7 @@ const DatePickerHeader = styled('div')({
     height: '46px',
     display: 'flex',
     justifyContent: 'space-around',
+    color: (props) => props.theme.colors.light.fg,
 })
 
 const DatePickerBody = styled('div')({
@@ -35,6 +36,7 @@ const WeekDay = styled('div')({
     width: '35px',
     height: '35px',
     borderRadius: '6px',
+    color: (props) => props.theme.colors.light.fg,
 })
 
 const WeekRow = styled('div')({
@@ -48,6 +50,8 @@ const Button = styled('button')({
     borderRadius: '12px',
     padding: '5px 15px',
     alignSelf: 'center',
+    color: (props) => props.theme.colors.light['blue-2'],
+    backgroundColor: (props) => props.theme.colors.light['blue-1'],
 })
 
 const CalendarWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import DatePicker from '.'
+import Provider from '../Theme/Provider'
 
 export default {
     title: 'Calendar/DatePicker',
@@ -8,6 +9,13 @@ export default {
     argTypes: {
         backgroundColor: { control: 'color' },
     },
+    decorators: [
+        (Story) => (
+            <Provider>
+                <Story />
+            </Provider>
+        ),
+    ],
 }
 
 const Template = (args) => <DatePicker {...args} />
