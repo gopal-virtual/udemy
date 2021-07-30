@@ -2,25 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Arrow from './assets/Arrow'
 import DoubleArrow from './assets/DoubleArrow'
-
-const Title = styled('span')({
-    fontFamily: '"Roboto", sans-serif',
-    fontWeight: (props) => props.theme.text.title.fontWeight,
-    fontSize: (props) => props.theme.text.title.fontSize,
-})
-
-const Body = styled('span')({
-    fontFamily: '"Roboto", sans-serif',
-    fontWeight: (props) => props.theme.text.body.fontWeight,
-    fontSize: (props) => props.theme.text.body.fontSize,
-})
-
-const Box = styled('div')({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-})
+import { Box, Body, Title } from './components/common'
 
 const DatePickerWrapper = styled(Box)({
     flexDirection: 'column',
