@@ -17,6 +17,8 @@ const DatePickerHeader = styled('div')({
     height: '46px',
     display: 'flex',
     justifyContent: 'space-around',
+    fontFamily: 'Roboto',
+    fontWeight: 700,
     color: (props) => props.theme.colors.light.fg,
 })
 
@@ -36,6 +38,8 @@ const WeekDay = styled('div')({
     width: '35px',
     height: '35px',
     borderRadius: '6px',
+    fontFamily: 'Roboto',
+    fontWeight: 500,
     color: (props) => props.theme.colors.light.fg,
 })
 
@@ -50,6 +54,8 @@ const Button = styled('button')({
     borderRadius: '12px',
     padding: '5px 15px',
     alignSelf: 'center',
+    fontFamily: 'Roboto',
+    fontWeight: 700,
     color: (props) => props.theme.colors.light['blue-2'],
     backgroundColor: (props) => props.theme.colors.light['blue-1'],
 })

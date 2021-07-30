@@ -1,9 +1,22 @@
 import React from 'react'
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { Theme } from './Theme'
 
+import './font.css'
+
+const GlobalStyle = createGlobalStyle`
+    body {
+        font-family: '"Roboto", sans-serif'
+    }
+`
+
 function Provider({ children }) {
-    return <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+    return (
+        <React.Fragment>
+            <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+            <GlobalStyle />
+        </React.Fragment>
+    )
 }
 
 export default Provider
