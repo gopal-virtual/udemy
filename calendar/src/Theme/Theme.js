@@ -12,7 +12,7 @@ export const Theme = {
     text: {
         title: {
             fontSize: '14px',
-            fontWeight: 'bold',
+            fontWeight: '700',
         },
         body: {
             fontSize: '11px',

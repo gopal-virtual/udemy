@@ -3,23 +3,39 @@ import styled from 'styled-components'
 import Arrow from './assets/Arrow'
 import DoubleArrow from './assets/DoubleArrow'
 
-const DatePickerWrapper = styled('div')({
+const Title = styled('span')({
+    fontFamily: '"Roboto", sans-serif',
+    fontWeight: (props) => props.theme.text.title.fontWeight,
+    fontSize: (props) => props.theme.text.title.fontSize,
+})
+
+const Body = styled('span')({
+    fontFamily: '"Roboto", sans-serif',
+    fontWeight: (props) => props.theme.text.body.fontWeight,
+    fontSize: (props) => props.theme.text.body.fontSize,
+})
+
+const Box = styled('div')({
     display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     boxSizing: 'border-box',
+})
+
+const DatePickerWrapper = styled(Box)({
+    flexDirection: 'column',
     width: '245px',
     height: 'auto',
     backgroundColor: (props) => props.theme.colors.light.bg,
+    boxShadow: (props) => props.theme.effects.shadow,
 })
 
-const DatePickerHeader = styled('div')({
+const DatePickerHeader = styled(Box)({
     width: '100%',
     height: '46px',
-    display: 'flex',
     justifyContent: 'space-around',
-    fontFamily: 'Roboto',
-    fontWeight: 700,
     color: (props) => props.theme.colors.light.fg,
+    borderBottom: (props) => `1px solid ${props.theme.colors.light['grey-1']}`,
 })
 
 const DatePickerBody = styled('div')({
@@ -27,26 +43,22 @@ const DatePickerBody = styled('div')({
     height: 'auto',
 })
 
-const DatePickerFooter = styled('div')({
+const DatePickerFooter = styled(Box)({
     width: '100%',
     height: '49px',
-    display: 'flex',
-    justifyContent: 'center',
+    borderTop: (props) => `1px solid ${props.theme.colors.light['grey-1']}`,
 })
 
-const WeekDay = styled('div')({
+const WeekDay = styled(Box)({
     width: '35px',
     height: '35px',
     borderRadius: '6px',
-    fontFamily: 'Roboto',
-    fontWeight: 500,
     color: (props) => props.theme.colors.light.fg,
 })
 
-const WeekRow = styled('div')({
+const WeekRow = styled(Box)({
     width: '100%',
     height: 'auto',
-    display: 'flex',
 })
 
 const Button = styled('button')({
@@ -54,8 +66,6 @@ const Button = styled('button')({
     borderRadius: '12px',
     padding: '5px 15px',
     alignSelf: 'center',
-    fontFamily: 'Roboto',
-    fontWeight: 700,
     color: (props) => props.theme.colors.light['blue-2'],
     backgroundColor: (props) => props.theme.colors.light['blue-1'],
 })
@@ -76,26 +86,32 @@ function DatePicker() {
             <DatePickerHeader>
                 <DoubleArrow></DoubleArrow>
                 <Arrow></Arrow>
-                January 2021
+                <Title>January 2021</Title>
                 <Arrow type="right"></Arrow>
                 <DoubleArrow type="right"></DoubleArrow>
             </DatePickerHeader>
             <DatePickerBody>
                 <WeekRow>
                     {CalendarWeek.map((day) => (
-                        <WeekDay>{day}</WeekDay>
+                        <WeekDay>
+                            <Body>{day}</Body>
+                        </WeekDay>
                     ))}
                 </WeekRow>
                 {Month.map((week) => (
                     <WeekRow>
                         {week.map((day) => (
-                            <WeekDay>{day}</WeekDay>
+                            <WeekDay>
+                                <Body>{day}</Body>
+                            </WeekDay>
                         ))}
                     </WeekRow>
                 ))}
             </DatePickerBody>
             <DatePickerFooter>
-                <Button>Today</Button>
+                <Button>
+                    <Title>Today</Title>
+                </Button>
             </DatePickerFooter>
         </DatePickerWrapper>
     )
