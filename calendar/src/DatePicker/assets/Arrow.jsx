@@ -16,7 +16,10 @@ function Arrow({ type = 'left', theme }) {
             viewBox="0 0 10 16"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            style={{ transform: PositionMap[type] }}
+            style={{
+                transform: PositionMap[type],
+                transition: theme.effects.transition,
+            }}
         >
             <path
                 d="M8 2L2 8L8 14"

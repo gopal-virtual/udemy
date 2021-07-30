@@ -17,4 +17,5 @@ export const Box = styled('div')({
     justifyContent: 'center',
     alignItems: 'center',
     boxSizing: 'border-box',
+    transition: (props) => props.theme.effects.transition,
 })

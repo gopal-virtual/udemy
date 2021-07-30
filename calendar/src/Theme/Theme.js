@@ -21,5 +21,6 @@ export const Theme = {
     },
     effects: {
         shadow: `0px 8px 15px rgba(0, 0, 0, 0.25)`,
+        transition: 'all 0.15s ease-in',
     },
 }

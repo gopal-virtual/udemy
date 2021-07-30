@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Arrow from './assets/Arrow'
-import { Box, Body } from './components/common'
+import Arrow from '../assets/Arrow'
+import { Box, Body } from './common'
 
 const DateTriggerWrapper = styled(Box)({
     border: (props) =>
@@ -15,13 +15,13 @@ const DateTriggerWrapper = styled(Box)({
     justifyContent: 'space-between',
 })
 
-function DateTrigger({ value = new Date(), active = false }) {
+function DateTrigger({ value = new Date(), active = false, onClick = null }) {
     const dateString = value.toLocaleString(
         Intl.DateTimeFormat().resolvedOptions().locale,
         { year: 'numeric', month: 'long', day: 'numeric' }
     )
     return (
-        <DateTriggerWrapper active={active}>
+        <DateTriggerWrapper active={active} onClick={onClick}>
             <Body>{dateString}</Body>
             <Arrow type={active ? 'up' : 'down'} />
         </DateTriggerWrapper>

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import DateTrigger from './DateTrigger'
-import Provider from '../Theme/Provider'
+import Provider from '../../Theme/Provider'
 
 export default {
     title: 'Calendar/DateTrigger',

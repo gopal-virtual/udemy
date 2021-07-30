@@ -1,11 +1,11 @@
 import React from 'react'
 
-import DatePicker from './DatePicker'
-import Provider from '../Theme/Provider'
+import DatePopup from './DatePopup'
+import Provider from '../../Theme/Provider'
 
 export default {
-    title: 'Calendar/DatePicker',
-    component: DatePicker,
+    title: 'Calendar/DatePopup',
+    component: DatePopup,
     argTypes: {
         backgroundColor: { control: 'color' },
     },
@@ -18,12 +18,10 @@ export default {
     ],
 }
 
-const Template = (args) => <DatePicker {...args} />
+const Template = (args) => <DatePopup {...args} />
 
 export const Default = Template.bind({})
-Default.args = {
-    onChange: () => console.log,
-}
+Default.args = {}
 Default.story = {
     parameters: {
         design: {
