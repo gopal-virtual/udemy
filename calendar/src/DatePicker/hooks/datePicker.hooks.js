@@ -36,6 +36,13 @@ const useDate = (value) => {
         return Utils.isDateMatch(year, monthIndex, date, dateObj)
     }
 
+    const setToday = (callback) => {
+        const today = new Date()
+        setMonthIndex(Utils.getCurrentMonthIndex(today))
+        setYear(Utils.getCurrentYear(today))
+        callback && callback(today)
+    }
+
     React.useEffect(() => {
         setDaysOfMonth(Utils.getDaysOfMonth(year, monthIndex))
     }, [monthIndex, year])
@@ -46,6 +53,7 @@ const useDate = (value) => {
         year,
         daysOfMonth,
         CalendarWeek: Utils.CalendarWeek,
+        setToday,
         isSelected,
         prevMonth,
         nextMonth,

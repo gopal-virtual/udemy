@@ -89,6 +89,7 @@ function DatePopup({ active, onChange, value }) {
         year,
         daysOfMonth,
         CalendarWeek,
+        setToday,
         isSelected,
         prevMonth,
         nextMonth,
@@ -144,7 +145,7 @@ function DatePopup({ active, onChange, value }) {
                 ))}
             </DatePopupBody>
             <DatePopupFooter>
-                <Button>
+                <Button onClick={() => setToday(onChange)}>
                     <Title>Today</Title>
                 </Button>
             </DatePopupFooter>
