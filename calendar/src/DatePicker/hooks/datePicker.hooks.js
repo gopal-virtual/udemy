@@ -32,6 +32,10 @@ const useDate = (value) => {
         setYear(year + 1)
     }
 
+    const isSelected = (date, dateObj) => {
+        return Utils.isDateMatch(year, monthIndex, date, dateObj)
+    }
+
     React.useEffect(() => {
         setDaysOfMonth(Utils.getDaysOfMonth(year, monthIndex))
     }, [monthIndex, year])
@@ -42,6 +46,7 @@ const useDate = (value) => {
         year,
         daysOfMonth,
         CalendarWeek: Utils.CalendarWeek,
+        isSelected,
         prevMonth,
         nextMonth,
         prevYear,

@@ -44,11 +44,23 @@ const DatePopupFooter = styled(Box)({
     borderTop: (props) => `1px solid ${props.theme.colors.light['grey-1']}`,
 })
 
-const WeekDay = styled(Box)({
+const ActiveDay = styled(Box)({
+    color: (props) =>
+        props.isToday || props.isSelected
+            ? props.theme.colors.light['blue-2']
+            : props.theme.colors.light.fg,
+    backgroundColor: (props) =>
+        props.isSelected
+            ? props.theme.colors.light['blue-1']
+            : props.theme.colors.light.bg,
+})
+
+const WeekDay = styled(ActiveDay)({
     width: '35px',
     height: '35px',
     borderRadius: '6px',
-    color: (props) => props.theme.colors.light.fg,
+    cursor: 'pointer',
+    userSelect: 'none',
 })
 
 const WeekRow = styled(Box)({
@@ -73,9 +85,11 @@ const Link = styled('div')({
 function DatePopup({ active, onChange, value }) {
     const {
         month,
+        monthIndex,
         year,
         daysOfMonth,
         CalendarWeek,
+        isSelected,
         prevMonth,
         nextMonth,
         prevYear,
@@ -113,7 +127,16 @@ function DatePopup({ active, onChange, value }) {
                 {daysOfMonth.map((week, i) => (
                     <WeekRow key={i}>
                         {week.map((day, dayIndex) => (
-                            <WeekDay key={dayIndex}>
+                            <WeekDay
+                                key={dayIndex}
+                                isToday={day.isToday}
+                                isSelected={isSelected(day.date, value)}
+                                onClick={() =>
+                                    onChange(
+                                        new Date(year, monthIndex, day.date)
+                                    )
+                                }
+                            >
                                 <Body>{day.date}</Body>
                             </WeekDay>
                         ))}

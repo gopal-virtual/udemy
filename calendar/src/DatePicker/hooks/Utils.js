@@ -27,6 +27,19 @@ const getNumberOfDays = (year, monthIndex) =>
 const getDayOfWeek = (year, monthIndex, date) =>
     new Date(year, monthIndex, date).getDay()
 
+export const isDateMatch = (
+    year,
+    monthIndex,
+    date,
+    compareDateObj = new Date()
+) => {
+    return (
+        year === compareDateObj.getFullYear() &&
+        monthIndex === compareDateObj.getMonth() &&
+        date === compareDateObj.getDate()
+    )
+}
+
 export const getDaysOfMonth = (year, monthIndex) => {
     let daysOfMonth = []
     const numberOfDays = getNumberOfDays(year, monthIndex)
@@ -40,7 +53,10 @@ export const getDaysOfMonth = (year, monthIndex) => {
             daysOfMonth.push(Array(CalendarWeek.length).fill({}))
         }
 
-        daysOfMonth[rowIndex][colIndex] = { date: dayIndex + 1 }
+        daysOfMonth[rowIndex][colIndex] = {
+            date: dayIndex + 1,
+            isToday: isDateMatch(year, monthIndex, dayIndex + 1),
+        }
     }
     return daysOfMonth
 }
