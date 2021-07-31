@@ -70,20 +70,17 @@ const Link = styled('div')({
     userSelect: 'none',
 })
 
-const CalendarWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-const Month = [
-    [null, null, 1, 2, 3, 4, 5],
-    [6, 7, 8, 9, 10, 11, 12],
-    [13, 14, 15, 16, 17, 18, 19],
-    [20, 21, 22, 23, 24, 25, 26],
-    [27, 28, 29, 30, 31, null, null],
-]
-
 function DatePopup({ active, onChange, value }) {
-    const { month, year, prevMonth, nextMonth, prevYear, nextYear } = useDate(
-        value
-    )
+    const {
+        month,
+        year,
+        daysOfMonth,
+        CalendarWeek,
+        prevMonth,
+        nextMonth,
+        prevYear,
+        nextYear,
+    } = useDate(value)
     return (
         <TogglePopup active={active}>
             <DatePopupHeader>
@@ -113,11 +110,11 @@ function DatePopup({ active, onChange, value }) {
                         </WeekDay>
                     ))}
                 </WeekRow>
-                {Month.map((week, i) => (
+                {daysOfMonth.map((week, i) => (
                     <WeekRow key={i}>
                         {week.map((day, dayIndex) => (
                             <WeekDay key={dayIndex}>
-                                <Body>{day}</Body>
+                                <Body>{day.date}</Body>
                             </WeekDay>
                         ))}
                     </WeekRow>
