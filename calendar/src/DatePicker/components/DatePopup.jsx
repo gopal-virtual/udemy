@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Arrow from '../assets/Arrow'
 import DoubleArrow from '../assets/DoubleArrow'
+import useDate from '../hooks/datePicker.hooks'
 import { Box, Body, Title } from './common'
 
 const DatePopupWrapper = styled(Box)({
@@ -70,28 +71,33 @@ const Month = [
     [27, 28, 29, 30, 31, null, null],
 ]
 
-function DatePopup({ active }) {
+function DatePopup({ active, onChange, value }) {
+    const { month, year, prevMonth, nextMonth, prevYear, nextYear } = useDate(
+        value
+    )
     return (
         <TogglePopup active={active}>
             <DatePopupHeader>
                 <DoubleArrow></DoubleArrow>
                 <Arrow></Arrow>
-                <Title>January 2021</Title>
+                <Title>
+                    {month} {year}
+                </Title>
                 <Arrow type="right"></Arrow>
                 <DoubleArrow type="right"></DoubleArrow>
             </DatePopupHeader>
             <DatePopupBody>
                 <WeekRow>
                     {CalendarWeek.map((day) => (
-                        <WeekDay>
+                        <WeekDay key={day}>
                             <Body>{day}</Body>
                         </WeekDay>
                     ))}
                 </WeekRow>
-                {Month.map((week) => (
-                    <WeekRow>
-                        {week.map((day) => (
-                            <WeekDay>
+                {Month.map((week, i) => (
+                    <WeekRow key={i}>
+                        {week.map((day, dayIndex) => (
+                            <WeekDay key={dayIndex}>
                                 <Body>{day}</Body>
                             </WeekDay>
                         ))}

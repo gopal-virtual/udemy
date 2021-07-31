@@ -14,16 +14,16 @@ function DoubleArrow({ type = 'left', theme }) {
             <path
                 d="M14 2L8 8L14 14"
                 stroke={theme.colors.light['grey-2']}
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
             <path
                 d="M8 2L2 8L8 14"
                 stroke={theme.colors.light['grey-2']}
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
         </svg>
     )

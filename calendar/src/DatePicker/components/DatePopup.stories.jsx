@@ -21,7 +21,9 @@ export default {
 const Template = (args) => <DatePopup {...args} />
 
 export const Default = Template.bind({})
-Default.args = {}
+Default.args = {
+    active: true,
+}
 Default.story = {
     parameters: {
         design: {
