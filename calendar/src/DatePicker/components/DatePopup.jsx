@@ -13,6 +13,10 @@ const DatePopupWrapper = styled(Box)({
     boxShadow: (props) => props.theme.effects.shadow,
 })
 
+const Header = styled(Box)({
+    width: '50%',
+})
+
 const TogglePopup = styled(DatePopupWrapper)({
     position: 'absolute',
     transform: (props) =>
@@ -61,6 +65,11 @@ const Button = styled('button')({
     backgroundColor: (props) => props.theme.colors.light['blue-1'],
 })
 
+const Link = styled('div')({
+    cursor: 'pointer',
+    userSelect: 'none',
+})
+
 const CalendarWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const Month = [
@@ -78,13 +87,23 @@ function DatePopup({ active, onChange, value }) {
     return (
         <TogglePopup active={active}>
             <DatePopupHeader>
-                <DoubleArrow></DoubleArrow>
-                <Arrow></Arrow>
-                <Title>
-                    {month} {year}
-                </Title>
-                <Arrow type="right"></Arrow>
-                <DoubleArrow type="right"></DoubleArrow>
+                <Link onClick={prevYear}>
+                    <DoubleArrow></DoubleArrow>
+                </Link>
+                <Link onClick={prevMonth}>
+                    <Arrow></Arrow>
+                </Link>
+                <Header>
+                    <Title>
+                        {month} {year}
+                    </Title>
+                </Header>
+                <Link onClick={nextMonth}>
+                    <Arrow type="right"></Arrow>
+                </Link>
+                <Link onClick={nextYear}>
+                    <DoubleArrow type="right"></DoubleArrow>
+                </Link>
             </DatePopupHeader>
             <DatePopupBody>
                 <WeekRow>
