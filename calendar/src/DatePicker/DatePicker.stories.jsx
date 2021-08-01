@@ -11,7 +11,7 @@ export default {
     },
     decorators: [
         (Story) => (
-            <Provider>
+            <Provider mode="dark">
                 <Story />
             </Provider>
         ),

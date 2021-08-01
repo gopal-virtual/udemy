@@ -7,12 +7,14 @@ const DateTriggerWrapper = styled(Box)({
     border: (props) =>
         `1px solid ${
             props.active
-                ? props.theme.colors.light['blue-2']
-                : props.theme.colors.light['grey-1']
+                ? props.theme.colors['blue-2']
+                : props.theme.colors['grey-1']
         }`,
     width: '200px',
     padding: '15px 20px',
     justifyContent: 'space-between',
+    backgroundColor: (props) => props.theme.colors.bg,
+    color: (props) => props.theme.colors.fg,
 })
 
 function DateTrigger({ value = new Date(), active = false, onClick = null }) {

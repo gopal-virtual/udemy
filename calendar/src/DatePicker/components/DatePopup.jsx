@@ -9,7 +9,7 @@ const DatePopupWrapper = styled(Box)({
     flexDirection: 'column',
     width: '245px',
     height: 'auto',
-    backgroundColor: (props) => props.theme.colors.light.bg,
+    backgroundColor: (props) => props.theme.colors.bg,
     boxShadow: (props) => props.theme.effects.shadow,
 })
 
@@ -29,8 +29,8 @@ const DatePopupHeader = styled(Box)({
     width: '100%',
     height: '46px',
     justifyContent: 'space-around',
-    color: (props) => props.theme.colors.light.fg,
-    borderBottom: (props) => `1px solid ${props.theme.colors.light['grey-1']}`,
+    color: (props) => props.theme.colors.fg,
+    borderBottom: (props) => `1px solid ${props.theme.colors['grey-1']}`,
 })
 
 const DatePopupBody = styled('div')({
@@ -41,18 +41,16 @@ const DatePopupBody = styled('div')({
 const DatePopupFooter = styled(Box)({
     width: '100%',
     height: '49px',
-    borderTop: (props) => `1px solid ${props.theme.colors.light['grey-1']}`,
+    borderTop: (props) => `1px solid ${props.theme.colors['grey-1']}`,
 })
 
 const ActiveDay = styled(Box)({
     color: (props) =>
         props.isToday || props.isSelected
-            ? props.theme.colors.light['blue-2']
-            : props.theme.colors.light.fg,
+            ? props.theme.colors['blue-2']
+            : props.theme.colors.fg,
     backgroundColor: (props) =>
-        props.isSelected
-            ? props.theme.colors.light['blue-1']
-            : props.theme.colors.light.bg,
+        props.isSelected ? props.theme.colors['blue-1'] : props.theme.colors.bg,
 })
 
 const WeekDay = styled(ActiveDay)({
@@ -73,8 +71,8 @@ const Button = styled('button')({
     borderRadius: '12px',
     padding: '5px 15px',
     alignSelf: 'center',
-    color: (props) => props.theme.colors.light['blue-2'],
-    backgroundColor: (props) => props.theme.colors.light['blue-1'],
+    color: (props) => props.theme.colors['blue-2'],
+    backgroundColor: (props) => props.theme.colors['blue-1'],
 })
 
 const Link = styled('div')({

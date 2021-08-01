@@ -23,7 +23,7 @@ function Arrow({ type = 'left', theme }) {
         >
             <path
                 d="M8 2L2 8L8 14"
-                stroke={theme.colors.light['grey-2']}
+                stroke={theme.colors['grey-2']}
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
