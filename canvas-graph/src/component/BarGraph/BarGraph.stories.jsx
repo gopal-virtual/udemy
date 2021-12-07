@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import BarGraph from './BarGraph';
+import BarGraph from "./BarGraph";
 
 export default {
-  title: 'Example/BarGraph',
+  title: "Example/BarGraph",
   component: BarGraph,
   argTypes: {
-    backgroundColor: { control: 'color' },
+    backgroundColor: { control: "color" },
   },
 };
 
