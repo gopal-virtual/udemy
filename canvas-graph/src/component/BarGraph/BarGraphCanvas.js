@@ -1,10 +1,25 @@
 import { map } from "../../Utils";
 
+function initCanvas(width, height) {
+  const canvas = document.createElement("canvas");
+
+  const pixelRatio = window.devicePixelRatio;
+  canvas.width = width * pixelRatio;
+  canvas.height = height * pixelRatio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+
+  const ctx = canvas.getContext("2d");
+  ctx.scale(pixelRatio, pixelRatio);
+
+  return ctx;
+}
+
 class BarGraphCanvas {
   constructor(parentRef, w, h) {
     this.ref = parentRef;
-    this.canvas = document.createElement("canvas");
-    this.ctx = this.canvas.getContext("2d");
+    this.ctx = initCanvas(w, h);
+    this.canvas = this.ctx.canvas;
     this.ref.appendChild(this.canvas);
 
     // consts
@@ -84,13 +99,14 @@ class BarGraphCanvas {
   drawLegands = (yLegand, normalizedData) => {
     this.ctx.save();
     this.ctx.fillStyle = "#7A7A7A";
-    this.ctx.font = "10px sans-serif";
+    this.ctx.font = "300 10px Roboto";
     this.ctx.textAlign = "center";
     // draw x legands
     normalizedData.forEach((point) => {
       this.ctx.fillText(point.xLegand, point.x, this.bottom + this.offset);
     });
     // draw y legands
+    this.ctx.textAlign = "right";
     yLegand.forEach((point) => {
       this.ctx.fillText(point.yLegand, point.x, this.bottom - point.y);
     });
