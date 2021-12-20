@@ -6,8 +6,8 @@ export const norm = (val, min, max) => {
   return (val - min) / (max - min);
 };
 
-export const map = (val, minA, maxA, minB, maxB) => {
+export const map = (val, minA, maxA, minB, maxB, round = true) => {
   const n = norm(val, minA, maxA);
   const l = lerp(n, minB, maxB);
-  return Math.round(l);
+  return round ? Math.round(l) : l;
 };

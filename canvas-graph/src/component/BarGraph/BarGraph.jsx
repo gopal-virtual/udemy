@@ -2,14 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import BarGraphCanvas from "./BarGraphCanvas";
-
-const normalizeData = (data = [], xKey, yKey) => {
-  const newData = data.map((dataPoints) => ({
-    x: dataPoints[xKey],
-    y: dataPoints[yKey],
-  }));
-  return newData;
-};
+import { map } from "../../Utils";
 
 const TextSizeMap = {
   header: "18px",
@@ -62,6 +55,47 @@ const Separator = styled("div")({
   background: "linear-gradient(270deg, #70DBD4 0%, #5297FF 100%)",
 });
 
+const canvasDims = {
+  padding: 20,
+  offset: 10,
+};
+
+const range = (data, key) =>
+  data.reduce((acc, point, i) => {
+    if (i === 0) {
+      return { min: point[key], max: point[key] };
+    }
+    return {
+      min: Math.min(acc.min, point[key]),
+      max: Math.max(acc.max, point[key]),
+    };
+  }, {});
+
+const modifyData = (data = [], xKey, yKey, dims) => {
+  const { min: minY, max: maxY } = range(data, yKey);
+  const newData = data.map((dataPoints, index) => ({
+    x: map(
+      index,
+      0,
+      data.length - 1,
+      dims.padding * 2,
+      dims.width - dims.padding * 2
+    ),
+    y: map(
+      dataPoints[yKey],
+      minY,
+      maxY,
+      dims.padding,
+      dims.height - dims.padding * 2
+    ),
+    xLegand: dataPoints[xKey],
+    yLegand: dataPoints[yKey],
+    minY,
+    maxY,
+  }));
+  return newData;
+};
+
 function BarGraph({ data, xKey, yKey }) {
   const canvasWrapperRef = React.useRef(null);
   const [canvas, setCanvas] = React.useState(null);
@@ -71,8 +105,10 @@ function BarGraph({ data, xKey, yKey }) {
     if (canvasWrapperRef && canvasWrapperRef.current) {
       const { width, height } =
         canvasWrapperRef.current.getBoundingClientRect();
-      canvasObj = new BarGraphCanvas(canvasWrapperRef.current, width, height);
-      canvasObj.render(normalizeData(data, xKey, yKey));
+      const dims = { ...canvasDims, width, height };
+      canvasObj = new BarGraphCanvas(canvasWrapperRef.current, dims);
+      const newData = modifyData(data, xKey, yKey, dims);
+      canvasObj.render(newData);
       setCanvas(canvasObj);
     }
     return () => canvasObj.destroy();
@@ -80,7 +116,7 @@ function BarGraph({ data, xKey, yKey }) {
 
   React.useEffect(() => {
     if (canvas) {
-      canvas.render(normalizeData(data, xKey, yKey));
+      canvas.render(modifyData(data, xKey, yKey));
     }
   }, [data, xKey, yKey]);
 

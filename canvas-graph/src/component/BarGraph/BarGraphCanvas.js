@@ -10,150 +10,149 @@ function initCanvas(width, height) {
   canvas.style.height = `${height}px`;
 
   const ctx = canvas.getContext("2d");
-  ctx.scale(pixelRatio, pixelRatio);
+  ctx.scale(pixelRatio, pixelRatio * -1);
 
   return ctx;
 }
 
 class BarGraphCanvas {
-  constructor(parentRef, w, h) {
+  constructor(parentRef, { width, height, padding, offset }) {
     this.ref = parentRef;
-    this.ctx = initCanvas(w, h);
+    this.ctx = initCanvas(width, height);
     this.canvas = this.ctx.canvas;
     this.ref.appendChild(this.canvas);
 
     // consts
-    this.w = this.canvas.width = w;
-    this.h = this.canvas.height = h;
-    this.left = 20;
-    this.right = this.w - 10;
-    this.top = 10;
-    this.bottom = this.h - 20;
+    this.w = this.canvas.width = width;
+    this.h = this.canvas.height = height;
+    this.padding = padding;
+    this.left = this.padding;
+    this.right = this.w - this.padding;
+    this.top = this.padding;
+    this.bottom = this.h - this.padding;
+    this.offset = offset;
     this.borderWidth = 1;
     this.barWidth = 14;
-    this.offset = 20;
   }
 
-  destroy() {
-    this.ref.removeChild(this.canvas);
-  }
+  _clear = () => {
+    this.ctx.clearRect(0, 0, this.w, this.h);
+  };
 
-  drawBar = (p1, p2) => {
+  _drawCoordsPlane = () => {
     this.ctx.save();
-    const grd = this.ctx.createLinearGradient(p2.x, p2.y, p1.x, p1.y);
-    grd.addColorStop(0, "#5297FF");
-    grd.addColorStop(1, "#70DBD4");
-    this.ctx.lineWidth = this.barWidth;
-    this.ctx.lineCap = "round";
-    this.ctx.strokeStyle = grd;
-    this.drawLine({ x: p1.x, y: p1.y }, { x: p2.x, y: p2.y });
-    this.ctx.clearRect(
-      p1.x - this.ctx.lineWidth / 2,
-      this.bottom + 1,
-      this.ctx.lineWidth,
-      this.ctx.lineWidth / 2
+    this.ctx.strokeStyle = "#E2E2E2";
+    this.ctx.lineWidth = this.borderWidth;
+    // draw x axis
+    this._drawLine(
+      { x: this.left, y: this.bottom },
+      { x: this.right, y: this.bottom }
+    );
+    // draw y axis
+    this._drawLine(
+      { x: this.left, y: this.top },
+      { x: this.left, y: this.bottom }
     );
     this.ctx.restore();
   };
 
-  plotBar = (data) => {
-    data.forEach((point) =>
-      this.drawBar(
-        { x: point.x, y: this.bottom },
-        { x: point.x, y: this.bottom - point.y }
-      )
-    );
+  _transposeData = (data) => {
+    // get y data flipped
+    return data.map((point) => ({
+      ...point,
+      y: this.h - point.y,
+    }));
   };
 
-  drawLine = (p1, p2) => {
+  _drawLine = (p1, p2) => {
     this.ctx.beginPath();
     this.ctx.moveTo(p1.x, p1.y);
     this.ctx.lineTo(p2.x, p2.y);
     this.ctx.stroke();
   };
 
-  drawCoordsPlane = () => {
-    this.ctx.save();
-    // style
-    this.ctx.strokeStyle = "#E2E2E2";
-    this.ctx.lineWidth = this.borderWidth;
-    // draw x and y axis
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.left, this.top);
-    this.ctx.lineTo(this.left, this.bottom);
-    this.ctx.lineTo(this.right, this.bottom);
-    this.ctx.stroke();
+  drawBar = (p1, p2) => {
+    const grd = this.ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+    grd.addColorStop(0, "#5297FF");
+    grd.addColorStop(1, "#70DBD4");
+    this.ctx.lineWidth = this.barWidth;
+    this.ctx.lineCap = "round";
+    this.ctx.strokeStyle = grd;
+    this._drawLine(p1, p2);
+    this.ctx.clearRect(
+      p2.x - this.ctx.lineWidth / 2,
+      this.bottom + this.borderWidth,
+      this.ctx.lineWidth,
+      this.ctx.lineWidth / 2
+    );
+  };
 
-    // draw horizontal grid
-    const gridInterval = 5;
-    const intervalHeight = (this.h - 20) / gridInterval;
-    for (let i = 1; i < gridInterval; i++) {
-      this.drawLine(
+  _drawBar = (data) => {
+    this.ctx.save();
+    data.forEach((point) => {
+      this.drawBar({ x: point.x, y: point.y }, { x: point.x, y: this.bottom });
+    });
+    this.ctx.restore();
+  };
+
+  _drawYLegands = (data) => {
+    this.ctx.save();
+    this.ctx.fillStyle = "#7A7A7A";
+    this.ctx.strokeStyle = "#7A7A7A";
+    this.ctx.lineWidth = this.borderWidth / 2;
+    this.ctx.font = "300 10px Roboto";
+    this.ctx.textAlign = "center";
+
+    const interval = 5;
+    const intervalHeight = (this.bottom - this.padding) / interval;
+    for (let i = 1; i < interval; i++) {
+      // draw y grid
+      this._drawLine(
         { x: this.left, y: this.bottom - intervalHeight * i },
         { x: this.right, y: this.bottom - intervalHeight * i }
+      );
+
+      // draw y legands
+      const pointY = map(i, 0, interval, this.bottom, this.top);
+      const yLegand = map(i, 0, interval, data[i].minY, data[i].maxY, false);
+      this.ctx.fillText(
+        yLegand.toFixed(1),
+        this.left - this.padding / 2,
+        pointY
       );
     }
     this.ctx.restore();
   };
 
-  drawLegands = (yLegand, normalizedData) => {
+  _drawXLegands = (data) => {
     this.ctx.save();
     this.ctx.fillStyle = "#7A7A7A";
     this.ctx.font = "300 10px Roboto";
     this.ctx.textAlign = "center";
+
     // draw x legands
-    normalizedData.forEach((point) => {
-      this.ctx.fillText(point.xLegand, point.x, this.bottom + this.offset);
+    data.forEach((point) => {
+      this.ctx.fillText(
+        point.xLegand,
+        point.x,
+        this.bottom + this.padding - this.padding / 4
+      );
     });
-    // draw y legands
-    this.ctx.textAlign = "right";
-    yLegand.forEach((point) => {
-      this.ctx.fillText(point.yLegand, point.x, this.bottom - point.y);
-    });
+
     this.ctx.restore();
   };
 
-  clear = () => {
-    this.ctx.clearRect(0, 0, this.w, this.h);
-  };
-
-  normalizeToCanvasData = (data) => {
-    const range = data.reduce((acc, point, i) => {
-      if (i === 0) {
-        return { min: point.y, max: point.y };
-      }
-      return {
-        min: Math.min(acc.min, point.y),
-        max: Math.max(acc.max, point.y),
-      };
-    }, {});
-    const yLegand = Array(6)
-      .fill()
-      .map((_, index) => ({
-        yLegand: map(index, 0, 5, range.min, range.max),
-        x: this.left - 10,
-        y: map(index, 0, 5, this.top, this.bottom),
-      }));
-    const normalizedData = data.map((point, index) => ({
-      x: map(index, 0, data.length, this.left + this.offset * 3, this.right),
-      y: map(
-        point.y,
-        range.min,
-        range.max,
-        this.top + this.offset,
-        this.bottom - this.offset
-      ),
-      xLegand: point.x,
-    }));
-    return { yLegand, normalizedData };
+  destroy = () => {
+    this.ref.removeChild(this.canvas);
   };
 
   render = (data) => {
-    const { yLegand, normalizedData } = this.normalizeToCanvasData(data);
-    this.clear();
-    this.drawCoordsPlane();
-    this.drawLegands(yLegand, normalizedData);
-    this.plotBar(normalizedData);
+    const transposedData = this._transposeData(data);
+    this._clear();
+    this._drawCoordsPlane();
+    this._drawYLegands(transposedData);
+    this._drawBar(transposedData);
+    this._drawXLegands(transposedData);
   };
 }
 
