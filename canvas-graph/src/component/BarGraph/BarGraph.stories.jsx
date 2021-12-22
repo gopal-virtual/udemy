@@ -31,4 +31,5 @@ Default.args = {
   data,
   yKey: "sales",
   xKey: "month",
+  yUnit: "M",
 };

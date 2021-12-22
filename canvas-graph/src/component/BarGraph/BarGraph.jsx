@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import BarGraphCanvas from "./BarGraphCanvas";
 import { map } from "../../Utils";
 
 const TextSizeMap = {
   header: "18px",
   paragraph: "14px",
-  legand: "10px",
+  Legend: "10px",
 };
 
 const TextWeightMap = {
@@ -56,7 +55,7 @@ const Separator = styled("div")({
 });
 
 const canvasDims = {
-  padding: 20,
+  padding: 30,
   offset: 10,
 };
 
@@ -88,37 +87,56 @@ const modifyData = (data = [], xKey, yKey, dims) => {
       dims.padding,
       dims.height - dims.padding * 2
     ),
-    xLegand: dataPoints[xKey],
-    yLegand: dataPoints[yKey],
-    minY,
-    maxY,
+    xLegend: dataPoints[xKey],
+    yLegend: dataPoints[yKey],
   }));
-  return newData;
+  return { data: newData, minY, maxY };
 };
 
-function BarGraph({ data, xKey, yKey }) {
+function BarGraph({ data, xKey, yKey, yUnit }) {
   const canvasWrapperRef = React.useRef(null);
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
   const [canvas, setCanvas] = React.useState(null);
 
+  const getDims = () => ({ ...canvasDims, width, height, yUnit });
+
+  const getModifiedData = () => {
+    const dims = getDims();
+    return modifyData(data, xKey, yKey, dims);
+  };
+
   React.useEffect(() => {
-    let canvasObj;
-    if (canvasWrapperRef && canvasWrapperRef.current) {
-      const { width, height } =
-        canvasWrapperRef.current.getBoundingClientRect();
-      const dims = { ...canvasDims, width, height };
-      canvasObj = new BarGraphCanvas(canvasWrapperRef.current, dims);
-      const newData = modifyData(data, xKey, yKey, dims);
-      canvasObj.render(newData);
-      setCanvas(canvasObj);
+    if (canvas) {
+      canvas.init(getDims());
+      canvas.render({ ...getModifiedData() });
     }
-    return () => canvasObj.destroy();
+  }, [width, height]);
+
+  const setDims = () => {
+    const { width, height } = canvasWrapperRef.current.getBoundingClientRect();
+    setWidth(width);
+    setHeight(height);
+  };
+
+  React.useEffect(() => {
+    if (canvasWrapperRef && canvasWrapperRef.current) {
+      const canvasObj = new BarGraphCanvas(canvasWrapperRef.current);
+      setCanvas(canvasObj);
+      setDims();
+    }
   }, [canvasWrapperRef]);
 
   React.useEffect(() => {
     if (canvas) {
-      canvas.render(modifyData(data, xKey, yKey));
+      canvas.render({ ...getModifiedData() });
     }
   }, [data, xKey, yKey]);
+
+  React.useEffect(() => {
+    window.addEventListener("resize", setDims);
+    return () => window.removeEventListener("resize", setDims);
+  }, []);
 
   return (
     <>

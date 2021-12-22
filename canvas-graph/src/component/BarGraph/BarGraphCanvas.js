@@ -10,14 +10,20 @@ function initCanvas(width, height) {
   canvas.style.height = `${height}px`;
 
   const ctx = canvas.getContext("2d");
-  ctx.scale(pixelRatio, pixelRatio * -1);
+  ctx.scale(pixelRatio, pixelRatio);
 
   return ctx;
 }
 
 class BarGraphCanvas {
-  constructor(parentRef, { width, height, padding, offset }) {
+  constructor(parentRef) {
     this.ref = parentRef;
+  }
+
+  init = ({ width, height, padding, offset, yUnit }) => {
+    if (this.canvas) {
+      this.destroy();
+    }
     this.ctx = initCanvas(width, height);
     this.canvas = this.ctx.canvas;
     this.ref.appendChild(this.canvas);
@@ -25,6 +31,7 @@ class BarGraphCanvas {
     // consts
     this.w = this.canvas.width = width;
     this.h = this.canvas.height = height;
+
     this.padding = padding;
     this.left = this.padding;
     this.right = this.w - this.padding;
@@ -33,7 +40,12 @@ class BarGraphCanvas {
     this.offset = offset;
     this.borderWidth = 1;
     this.barWidth = 14;
-  }
+    this.yUnit = yUnit;
+  };
+
+  destroy = () => {
+    this.ref.removeChild(this.canvas);
+  };
 
   _clear = () => {
     this.ctx.clearRect(0, 0, this.w, this.h);
@@ -95,13 +107,13 @@ class BarGraphCanvas {
     this.ctx.restore();
   };
 
-  _drawYLegands = (data) => {
+  _drawYLegends = () => {
     this.ctx.save();
     this.ctx.fillStyle = "#7A7A7A";
     this.ctx.strokeStyle = "#7A7A7A";
     this.ctx.lineWidth = this.borderWidth / 2;
     this.ctx.font = "300 10px Roboto";
-    this.ctx.textAlign = "center";
+    this.ctx.textAlign = "right";
 
     const interval = 5;
     const intervalHeight = (this.bottom - this.padding) / interval;
@@ -112,47 +124,45 @@ class BarGraphCanvas {
         { x: this.right, y: this.bottom - intervalHeight * i }
       );
 
-      // draw y legands
+      // draw y Legends
       const pointY = map(i, 0, interval, this.bottom, this.top);
-      const yLegand = map(i, 0, interval, data[i].minY, data[i].maxY, false);
+      const yLegend = map(i, 0, interval, this.minY, this.maxY, false);
       this.ctx.fillText(
-        yLegand.toFixed(1),
-        this.left - this.padding / 2,
+        `${yLegend.toFixed(1)}${this.yUnit || ""}`,
+        this.left - this.offset / 2,
         pointY
       );
     }
     this.ctx.restore();
   };
 
-  _drawXLegands = (data) => {
+  _drawXLegends = (data) => {
     this.ctx.save();
     this.ctx.fillStyle = "#7A7A7A";
     this.ctx.font = "300 10px Roboto";
     this.ctx.textAlign = "center";
 
-    // draw x legands
+    // draw x Legends
     data.forEach((point) => {
       this.ctx.fillText(
-        point.xLegand,
+        point.xLegend,
         point.x,
-        this.bottom + this.padding - this.padding / 4
+        this.bottom + this.padding - this.offset / 2
       );
     });
 
     this.ctx.restore();
   };
 
-  destroy = () => {
-    this.ref.removeChild(this.canvas);
-  };
-
-  render = (data) => {
+  render = ({ data, minY, maxY }) => {
+    this.minY = minY;
+    this.maxY = maxY;
     const transposedData = this._transposeData(data);
     this._clear();
     this._drawCoordsPlane();
-    this._drawYLegands(transposedData);
+    this._drawYLegends();
     this._drawBar(transposedData);
-    this._drawXLegands(transposedData);
+    this._drawXLegends(transposedData);
   };
 }
 
