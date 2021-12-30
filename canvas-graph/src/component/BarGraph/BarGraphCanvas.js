@@ -1,4 +1,5 @@
 import { map } from "../../Utils";
+import Tween from "../Tween/Tween";
 
 function initCanvas(width, height) {
   const canvas = document.createElement("canvas");
@@ -8,6 +9,7 @@ function initCanvas(width, height) {
   canvas.height = height * pixelRatio;
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
+  canvas.style.position = "absolute";
 
   const ctx = canvas.getContext("2d");
   ctx.scale(pixelRatio, pixelRatio);
@@ -21,16 +23,17 @@ class BarGraphCanvas {
   }
 
   init = ({ width, height, padding, offset, yUnit }) => {
-    if (this.canvas) {
-      this.destroy();
-    }
+    this.destroy();
     this.ctx = initCanvas(width, height);
+    this.bar_ctx = initCanvas(width, height);
     this.canvas = this.ctx.canvas;
+    this.bar_canvas = this.bar_ctx.canvas;
     this.ref.appendChild(this.canvas);
+    this.ref.appendChild(this.bar_canvas);
 
     // consts
-    this.w = this.canvas.width = width;
-    this.h = this.canvas.height = height;
+    this.w = this.canvas.width = this.bar_canvas.width = width;
+    this.h = this.canvas.height = this.bar_canvas.height = height;
 
     this.padding = padding;
     this.left = this.padding;
@@ -44,11 +47,16 @@ class BarGraphCanvas {
   };
 
   destroy = () => {
-    this.ref.removeChild(this.canvas);
+    if (this.canvas) {
+      this.ref.removeChild(this.canvas);
+    }
+    if (this.bar_canvas) {
+      this.ref.removeChild(this.bar_canvas);
+    }
   };
 
-  _clear = () => {
-    this.ctx.clearRect(0, 0, this.w, this.h);
+  _clear = (ctx) => {
+    ctx.clearRect(0, 0, this.w, this.h);
   };
 
   _drawCoordsPlane = () => {
@@ -76,35 +84,50 @@ class BarGraphCanvas {
     }));
   };
 
-  _drawLine = (p1, p2) => {
-    this.ctx.beginPath();
-    this.ctx.moveTo(p1.x, p1.y);
-    this.ctx.lineTo(p2.x, p2.y);
-    this.ctx.stroke();
+  _drawLine = (p1, p2, ctx = this.ctx) => {
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
   };
 
   drawBar = (p1, p2) => {
-    const grd = this.ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+    this.bar_ctx.clearRect(
+      p1.x - this.bar_ctx.lineWidth / 2,
+      this.top,
+      this.bar_ctx.lineWidth,
+      p2.y
+    );
+    const grd = this.bar_ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
     grd.addColorStop(0, "#5297FF");
     grd.addColorStop(1, "#70DBD4");
-    this.ctx.lineWidth = this.barWidth;
-    this.ctx.lineCap = "round";
-    this.ctx.strokeStyle = grd;
-    this._drawLine(p1, p2);
-    this.ctx.clearRect(
-      p2.x - this.ctx.lineWidth / 2,
+    this.bar_ctx.lineWidth = this.barWidth;
+    this.bar_ctx.lineCap = "round";
+    this.bar_ctx.strokeStyle = grd;
+    this._drawLine(p1, p2, this.bar_ctx);
+    this.bar_ctx.clearRect(
+      p2.x - this.bar_ctx.lineWidth / 2,
       this.bottom + this.borderWidth,
-      this.ctx.lineWidth,
-      this.ctx.lineWidth / 2
+      this.bar_ctx.lineWidth,
+      this.bar_ctx.lineWidth / 2
     );
   };
 
+  // loop through tween
+  //  // get updated data from tween func
+  //  // clear bar ctx
+  //  // call the entire loop
+  // end loop
   _drawBar = (data) => {
-    this.ctx.save();
+    this.bar_ctx.save();
+    const tween = new Tween();
     data.forEach((point) => {
-      this.drawBar({ x: point.x, y: point.y }, { x: point.x, y: this.bottom });
+      const draw = (newVal) => {
+        this.drawBar({ x: point.x, y: newVal }, { x: point.x, y: this.bottom });
+      };
+      tween._play(this.bottom, point.y, 700, draw);
     });
-    this.ctx.restore();
+    this.bar_ctx.restore();
   };
 
   _drawYLegends = () => {
@@ -158,7 +181,7 @@ class BarGraphCanvas {
     this.minY = minY;
     this.maxY = maxY;
     const transposedData = this._transposeData(data);
-    this._clear();
+    this._clear(this.ctx);
     this._drawCoordsPlane();
     this._drawYLegends();
     this._drawBar(transposedData);

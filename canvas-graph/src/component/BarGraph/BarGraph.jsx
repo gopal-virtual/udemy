@@ -44,6 +44,7 @@ const CanvasWrapper = styled("div")({
   margin: "21px 0",
   width: "100%",
   height: "350px",
+  position: "relative",
 });
 
 const Separator = styled("div")({
@@ -62,7 +63,7 @@ const canvasDims = {
 const range = (data, key) =>
   data.reduce((acc, point, i) => {
     if (i === 0) {
-      return { min: point[key], max: point[key] };
+      return { min: 0, max: point[key] };
     }
     return {
       min: Math.min(acc.min, point[key]),
