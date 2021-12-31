@@ -1,19 +1,48 @@
 class Tween {
-  _play = (startVal, endVal, duration, callback) => {
+  _play = (startVal, endVal, duration, renderId, callback) => {
     const startTime = new Date();
     const changeVal = endVal - startVal;
-    this._ease(endVal, startVal, changeVal, startTime, duration, callback);
+    this._ease(
+      endVal,
+      startVal,
+      changeVal,
+      startTime,
+      duration,
+      renderId,
+      callback
+    );
   };
-  _ease = (endVal, startVal, changeVal, startTime, duration, callback) => {
+  _ease = (
+    endVal,
+    startVal,
+    changeVal,
+    startTime,
+    duration,
+    renderId,
+    callback,
+    prevVal = null
+  ) => {
     var elapsed = new Date() - startTime;
     if (elapsed < duration) {
       const newVal = this.quadEaseOut(elapsed / duration, changeVal, startVal);
-      callback && callback(newVal);
+      if (!prevVal) {
+        prevVal = newVal;
+      }
+      callback && callback(newVal, prevVal, renderId);
       window.requestAnimationFrame(() =>
-        this._ease(endVal, startVal, changeVal, startTime, duration, callback)
+        this._ease(
+          endVal,
+          startVal,
+          changeVal,
+          startTime,
+          duration,
+          renderId,
+          callback,
+          newVal
+        )
       );
     } else {
-      callback && callback(endVal);
+      callback && callback(endVal, prevVal, renderId);
     }
   };
   quadEaseIn = (normTime, changeVal, startVal) => {

@@ -22,7 +22,7 @@ class BarGraphCanvas {
     this.ref = parentRef;
   }
 
-  init = ({ width, height, padding, offset, yUnit }) => {
+  init = ({ width, height, padding, offset, yUnit, renderId }) => {
     this.destroy();
     this.ctx = initCanvas(width, height);
     this.bar_ctx = initCanvas(width, height);
@@ -30,6 +30,7 @@ class BarGraphCanvas {
     this.bar_canvas = this.bar_ctx.canvas;
     this.ref.appendChild(this.canvas);
     this.ref.appendChild(this.bar_canvas);
+    this.renderId = renderId;
 
     // consts
     this.w = this.canvas.width = this.bar_canvas.width = width;
@@ -48,9 +49,11 @@ class BarGraphCanvas {
 
   destroy = () => {
     if (this.canvas) {
+      this.ctx = null;
       this.ref.removeChild(this.canvas);
     }
     if (this.bar_canvas) {
+      this.bar_ctx = null;
       this.ref.removeChild(this.bar_canvas);
     }
   };
@@ -91,13 +94,16 @@ class BarGraphCanvas {
     ctx.stroke();
   };
 
-  drawBar = (p1, p2) => {
+  clearBar = (p1, p2) => {
     this.bar_ctx.clearRect(
-      p1.x - this.bar_ctx.lineWidth / 2,
-      this.top,
-      this.bar_ctx.lineWidth,
+      p1.x - this.barWidth / 2,
+      p1.y - this.barWidth / 2,
+      this.barWidth,
       p2.y
     );
+  };
+
+  drawBar = (p1, p2) => {
     const grd = this.bar_ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
     grd.addColorStop(0, "#5297FF");
     grd.addColorStop(1, "#70DBD4");
@@ -122,10 +128,18 @@ class BarGraphCanvas {
     this.bar_ctx.save();
     const tween = new Tween();
     data.forEach((point) => {
-      const draw = (newVal) => {
-        this.drawBar({ x: point.x, y: newVal }, { x: point.x, y: this.bottom });
+      const draw = (newVal, prevVal, renderId) => {
+        this.clearBar(
+          { x: point.x, y: prevVal },
+          { x: point.x, y: this.bottom }
+        );
+        renderId === this.renderId &&
+          this.drawBar(
+            { x: point.x, y: newVal },
+            { x: point.x, y: this.bottom }
+          );
       };
-      tween._play(this.bottom, point.y, 700, draw);
+      tween._play(this.bottom, point.y, 700, this.renderId, draw);
     });
     this.bar_ctx.restore();
   };
@@ -182,6 +196,7 @@ class BarGraphCanvas {
     this.maxY = maxY;
     const transposedData = this._transposeData(data);
     this._clear(this.ctx);
+    this._clear(this.bar_ctx);
     this._drawCoordsPlane();
     this._drawYLegends();
     this._drawBar(transposedData);

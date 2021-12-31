@@ -100,7 +100,13 @@ function BarGraph({ data, xKey, yKey, yUnit }) {
   const [height, setHeight] = React.useState(0);
   const [canvas, setCanvas] = React.useState(null);
 
-  const getDims = () => ({ ...canvasDims, width, height, yUnit });
+  const getDims = () => ({
+    ...canvasDims,
+    width,
+    height,
+    yUnit,
+    renderId: new Date().valueOf().toString(),
+  });
 
   const getModifiedData = () => {
     const dims = getDims();
