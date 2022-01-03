@@ -20,17 +20,14 @@ const TextAlignMap = {
   right: "flex-end",
 };
 
-const ColorMap = {
-  "red-pink": "linear-gradient(180deg, #FF4A4A 0%, #FC5CFF 100%)",
-  "blue-teal": "linear-gradient(180deg, #5297FF 0%, #70DBD4 100%)",
-  "orange-yellow": "linear-gradient(180deg, #FFA26D 0%, #FFD771 100%)",
-};
-
 const Text = styled("span")({
   width: (props) => props.width || "auto",
   display: "inline-block",
   fontFamily: "Roboto",
-  background: (props) => (props.color ? ColorMap[props.color] : "black"),
+  background: (props) =>
+    props.color
+      ? props.theme.colors[props.color]
+      : props.theme.colors.foreground,
   "-webkit-background-clip": "text",
   color: "transparent",
   textAlign: (props) => props.align || "left",
@@ -43,7 +40,13 @@ const Separator = styled("div")({
   width: "24px",
   height: "5px",
   margin: "12px 0",
-  background: "linear-gradient(270deg, #70DBD4 0%, #5297FF 100%)",
+  background: (props) => props.theme.colors["teal-blue-horizontal"],
+});
+
+const GraphWrapper = styled("div")({
+  boxSizing: "border-box",
+  background: (props) => props.theme.colors.background,
+  padding: "25px",
 });
 
 const getGraphString = ({ data, yUnit }) => {
@@ -63,8 +66,9 @@ const getGraphString = ({ data, yUnit }) => {
 
 function BarGraph(props) {
   const { lastMonthSales, lastMonth, delta } = getGraphString(props);
+
   return (
-    <>
+    <GraphWrapper>
       <Text type="header">
         <Text type="header" weight="highlight">
           {lastMonthSales}
@@ -85,7 +89,7 @@ function BarGraph(props) {
         </Text>{" "}
         sales from previous month
       </Text>
-    </>
+    </GraphWrapper>
   );
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { withTheme } from "styled-components";
 import { map } from "../../Utils/Utils";
 import useCanvas from "../../hooks/useCanvas";
 import useData from "./useData";
@@ -13,11 +13,11 @@ const CanvasWrapper = styled("div")({
   position: "relative",
 });
 
-function BarCanvas({ data, xKey, yKey, yUnit }) {
+function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
   const canvasWrapperRef = React.useRef(null);
   const { ctx, canvasH, canvasW, clearCanvas } = useCanvas(canvasWrapperRef);
   const [dims, setDims] = React.useState({
-    padding: 30,
+    padding: 40,
     offset: 10,
   });
   const { graphData, minY, maxY } = useData(data, xKey, yKey, dims);
@@ -45,11 +45,12 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
 
   const _drawYLegends = () => {
     ctx.save();
-    ctx.fillStyle = "#7A7A7A";
-    ctx.strokeStyle = "#E2E2E2";
+    ctx.fillStyle = theme.colors["grey-2"];
+    ctx.strokeStyle = theme.colors["grey-1"];
     ctx.lineWidth = dims.borderWidth / 2;
     ctx.font = "300 10px Roboto";
     ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
 
     const interval = 5;
     const intervalHeight = (dims.bottom - dims.padding) / interval;
@@ -65,7 +66,7 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
       const yLegend = map(i, 0, interval, minY, maxY, false);
       ctx.fillText(
         `${yLegend.toFixed(1)}${yUnit || ""}`,
-        dims.left - dims.offset / 2,
+        dims.left - dims.offset,
         pointY
       );
     }
@@ -74,7 +75,7 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
 
   const _drawCoordsPlane = () => {
     ctx.save();
-    ctx.strokeStyle = "#E2E2E2";
+    ctx.strokeStyle = theme.colors["grey-1"];
     ctx.lineWidth = dims.borderWidth;
     // draw x axis
     _drawLine(
@@ -88,17 +89,13 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
 
   const _drawXLegends = () => {
     ctx.save();
-    ctx.fillStyle = "#7A7A7A";
+    ctx.fillStyle = theme.colors["grey-2"];
     ctx.font = "300 10px Roboto";
     ctx.textAlign = "center";
 
     // draw x Legends
     graphData.forEach((point) => {
-      ctx.fillText(
-        point.xLegend,
-        point.x,
-        dims.bottom + dims.padding - dims.offset / 2
-      );
+      ctx.fillText(point.xLegend, point.x, dims.bottom + dims.offset * 2);
     });
 
     ctx.restore();
@@ -106,8 +103,8 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
 
   const _drawBar = (p1, p2) => {
     const grd = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
-    grd.addColorStop(0, "#5297FF");
-    grd.addColorStop(1, "#70DBD4");
+    grd.addColorStop(0, theme.colors.blue);
+    grd.addColorStop(1, theme.colors.teal);
     ctx.lineWidth = dims.barWidth;
     ctx.lineCap = "round";
     ctx.strokeStyle = grd;
@@ -142,9 +139,9 @@ function BarCanvas({ data, xKey, yKey, yUnit }) {
 
   React.useEffect(() => {
     if (graphData.length) render();
-  }, [graphData]);
+  }, [graphData, theme]);
 
   return <CanvasWrapper ref={canvasWrapperRef}></CanvasWrapper>;
 }
 
-export default BarCanvas;
+export default withTheme(BarCanvas);

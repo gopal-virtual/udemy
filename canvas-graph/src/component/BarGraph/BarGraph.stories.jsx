@@ -8,7 +8,7 @@ export default {
   component: BarGraph,
   decorators: [
     (Story) => (
-      <Provider>
+      <Provider mode="dark">
         <Story />
       </Provider>
     ),

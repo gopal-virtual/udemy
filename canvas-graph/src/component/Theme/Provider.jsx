@@ -1,5 +1,6 @@
 import React from "react";
-import { createGlobalStyle } from "styled-components";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
+import Theme from "./theme";
 
 import "./font.css";
 
@@ -9,12 +10,22 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
-function Provider({ children }) {
+function Provider({ children, mode = "light" }) {
+  const [localMode, setLocalMode] = React.useState(mode);
+
+  React.useEffect(() => {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        setLocalMode(e.matches ? "dark" : "light");
+      });
+  }, []);
+
   return (
-    <React.Fragment>
+    <ThemeProvider theme={{ colors: Theme.colors[localMode] }}>
       {children}
       <GlobalStyle />
-    </React.Fragment>
+    </ThemeProvider>
   );
 }
 
