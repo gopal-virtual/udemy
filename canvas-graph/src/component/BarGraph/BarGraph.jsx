@@ -14,12 +14,6 @@ const TextWeightMap = {
   emphasis: 900,
 };
 
-const TextAlignMap = {
-  left: "flex-start",
-  center: "center",
-  right: "flex-end",
-};
-
 const Text = styled("span")({
   width: (props) => props.width || "auto",
   display: "inline-block",
@@ -45,7 +39,7 @@ const Separator = styled("div")({
 
 const GraphWrapper = styled("div")({
   boxSizing: "border-box",
-  background: (props) => props.theme.colors.background,
+  backgroundColor: (props) => props.theme.colors.background,
   padding: "25px",
 });
 
@@ -68,9 +62,9 @@ function BarGraph(props) {
   const { lastMonthSales, lastMonth, delta } = getGraphString(props);
 
   return (
-    <GraphWrapper>
+    <GraphWrapper data-testid="bar-wrapper">
       <Text type="header">
-        <Text type="header" weight="highlight">
+        <Text data-testid="bar-sales-figure" type="header" weight="highlight">
           {lastMonthSales}
         </Text>{" "}
         Sales for{" "}
@@ -84,7 +78,7 @@ function BarGraph(props) {
         <Text type="paragraph" weight="light" color="red-pink">
           {delta.prefix}
         </Text>{" "}
-        <Text type="paragraph" weight="highlight" color="red-pink">
+        <Text data-testid="bar-delta-figure" type="paragraph" weight="highlight" color="red-pink">
           {delta.string}
         </Text>{" "}
         sales from previous month
