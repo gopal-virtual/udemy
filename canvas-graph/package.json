@@ -1,63 +1,32 @@
 {
   "name": "canvas-graph",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "test-visual": "cypress open-ct",
+    "test-console": "cypress run-ct"
+  },
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
-    "styled-components": "^5.3.3",
-    "web-vitals": "^2.1.2"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test-visual": "cypress open-ct",
-    "test-console": "cypress run-ct",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.7",
     "@cypress/react": "^5.12.0",
-    "@cypress/webpack-dev-server": "^1.8.0",
-    "@storybook/addon-actions": "^6.4.9",
-    "@storybook/addon-essentials": "^6.4.9",
-    "@storybook/addon-links": "^6.4.9",
-    "@storybook/builder-webpack5": "^6.4.9",
-    "@storybook/manager-webpack5": "^6.4.9",
-    "@storybook/node-logger": "^6.4.9",
-    "@storybook/preset-create-react-app": "^4.0.0",
-    "@storybook/react": "^6.4.9",
+    "@cypress/vite-dev-server": "^2.2.2",
+    "@storybook/addon-actions": "^6.5.0-alpha.9",
+    "@storybook/addon-essentials": "^6.5.0-alpha.9",
+    "@storybook/addon-links": "^6.5.0-alpha.9",
+    "@storybook/react": "^6.5.0-alpha.9",
+    "@vitejs/plugin-react": "^1.0.7",
+    "babel-loader": "^8.2.3",
     "cypress": "^9.2.0",
-    "webpack": "^5.65.0"
+    "storybook-builder-vite": "^0.1.13",
+    "vite": "^2.7.2"
   }
 }

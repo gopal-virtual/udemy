@@ -1,6 +1,15 @@
-const injectDevServer = require("@cypress/react/plugins/react-scripts")
+// cypress/plugins/index.js
+
+const path = require('path')
+const { startDevServer } = require('@cypress/vite-dev-server')
 
 module.exports = (on, config) => {
-  injectDevServer(on, config)
-  return config
+  on('dev-server:start', (options) => {
+    return startDevServer({
+      options,
+      viteConfig: {
+        configFile: path.resolve(__dirname, '..', '..', 'vite.config.js'),
+      },
+    })
+  })
 }
