@@ -1,32 +1,35 @@
 {
-  "name": "canvas-graph",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "test-visual": "cypress open-ct",
-    "test-console": "cypress run-ct"
-  },
-  "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "styled-components": "^5.3.3"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@cypress/react": "^5.12.0",
-    "@cypress/vite-dev-server": "^2.2.2",
-    "@storybook/addon-actions": "^6.5.0-alpha.9",
-    "@storybook/addon-essentials": "^6.5.0-alpha.9",
-    "@storybook/addon-links": "^6.5.0-alpha.9",
-    "@storybook/react": "^6.5.0-alpha.9",
-    "@vitejs/plugin-react": "^1.0.7",
-    "babel-loader": "^8.2.3",
-    "cypress": "^9.2.0",
-    "storybook-builder-vite": "^0.1.13",
-    "vite": "^2.7.2"
-  }
+    "name": "canvas-graph",
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "storybook": "start-storybook -p 6006",
+        "build-storybook": "build-storybook",
+        "test-visual": "cypress open-ct",
+        "test-console": "cypress run-ct",
+        "percy-run": "export PERCY_TOKEN=7bbd8091f5851bca1782cd8af11dc47f0449ebd8bd0050c58593085eb5defdc9 && npx percy exec -- cypress run-ct"
+    },
+    "dependencies": {
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "styled-components": "^5.3.3"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.16.7",
+        "@cypress/react": "^5.12.0",
+        "@cypress/vite-dev-server": "^2.2.2",
+        "@percy/cli": "^1.0.0-beta.71",
+        "@percy/cypress": "^3.1.1",
+        "@storybook/addon-actions": "^6.5.0-alpha.9",
+        "@storybook/addon-essentials": "^6.5.0-alpha.9",
+        "@storybook/addon-links": "^6.5.0-alpha.9",
+        "@storybook/react": "^6.5.0-alpha.9",
+        "@vitejs/plugin-react": "^1.0.7",
+        "babel-loader": "^8.2.3",
+        "cypress": "^9.2.0",
+        "storybook-builder-vite": "^0.1.13",
+        "vite": "^2.7.2"
+    }
 }
