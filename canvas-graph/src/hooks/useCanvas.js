@@ -36,6 +36,12 @@ function useCanvas(parentDom) {
         ctx.clearRect(0, 0, canvasW, canvasH)
     })
 
+    const paintCanvas = React.useCallback((callback) => {
+        ctx.save()
+        callback?.(ctx)
+        ctx.restore()
+    })
+
     const setDims = React.useCallback(() => {
         const { width, height } = parentDom.current.getBoundingClientRect()
         setCanvasW(width)
@@ -59,7 +65,7 @@ function useCanvas(parentDom) {
         return () => window.removeEventListener('resize', setDims)
     }, [])
 
-    return [ctx, canvasW, canvasH, clearCanvas]
+    return [paintCanvas, clearCanvas, canvasW, canvasH, ctx]
 }
 
 export default useCanvas

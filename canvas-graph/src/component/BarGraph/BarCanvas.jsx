@@ -19,8 +19,9 @@ const Opacity100 = 'FF'
 
 function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
     const canvasWrapperRef = React.useRef(null)
-    const [ctx, canvasW, canvasH, clearCanvas] = useCanvas(canvasWrapperRef)
-    const [barCtx, barCanvasW, barCanvasH, clearBarCanvas] =
+    const [paintCanvas, clearCanvas, canvasW, canvasH] =
+        useCanvas(canvasWrapperRef)
+    const [paintBarCanvas, clearBarCanvas, barCanvasW, barCanvasH, barCtx] =
         useCanvas(canvasWrapperRef)
     const [dims, setDims] = React.useState({
         padding: 40,
@@ -50,87 +51,91 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
     }
 
     const _drawYLegends = () => {
-        ctx.save()
-        ctx.fillStyle = theme.colors['grey-2']
-        ctx.strokeStyle = theme.colors['grey-1']
-        ctx.lineWidth = dims.borderWidth / 2
-        ctx.font = '300 10px Roboto'
-        ctx.textAlign = 'right'
-        ctx.textBaseline = 'middle'
+        paintCanvas((ctx) => {
+            ctx.fillStyle = theme.colors['grey-2']
+            ctx.strokeStyle = theme.colors['grey-1']
+            ctx.lineWidth = dims.borderWidth / 2
+            ctx.font = '300 10px Roboto'
+            ctx.textAlign = 'right'
+            ctx.textBaseline = 'middle'
 
-        const interval = 5
-        const intervalHeight = (dims.bottom - dims.padding) / interval
-        for (let i = 1; i < interval; i++) {
-            // draw y grid
-            _drawLine(
-                { x: dims.left, y: dims.bottom - intervalHeight * i },
-                { x: dims.right, y: dims.bottom - intervalHeight * i },
-                ctx
-            )
+            const interval = 5
+            const intervalHeight = (dims.bottom - dims.padding) / interval
+            for (let i = 1; i < interval; i++) {
+                // draw y grid
+                _drawLine(
+                    { x: dims.left, y: dims.bottom - intervalHeight * i },
+                    { x: dims.right, y: dims.bottom - intervalHeight * i },
+                    ctx
+                )
 
-            // draw y Legends
-            const pointY = map(i, 0, interval, dims.bottom, dims.top)
-            const yLegend = map(i, 0, interval, minY, maxY, false)
-            ctx.fillText(
-                `${yLegend.toFixed(1)}${yUnit || ''}`,
-                dims.left - dims.offset,
-                pointY
-            )
-        }
-        ctx.restore()
+                // draw y Legends
+                const pointY = map(i, 0, interval, dims.bottom, dims.top)
+                const yLegend = map(i, 0, interval, minY, maxY, false)
+                ctx.fillText(
+                    `${yLegend.toFixed(1)}${yUnit || ''}`,
+                    dims.left - dims.offset,
+                    pointY
+                )
+            }
+        })
     }
 
     const _drawCoordsPlane = () => {
-        ctx.save()
-        ctx.strokeStyle = theme.colors['grey-1']
-        ctx.lineWidth = dims.borderWidth
-        // draw x axis
-        _drawLine(
-            { x: dims.left, y: dims.bottom },
-            { x: dims.right, y: dims.bottom },
-            ctx
-        )
-        // draw y axis
-        _drawLine(
-            { x: dims.left, y: dims.top },
-            { x: dims.left, y: dims.bottom },
-            ctx
-        )
-        ctx.restore()
+        paintCanvas((ctx) => {
+            ctx.strokeStyle = theme.colors['grey-1']
+            ctx.lineWidth = dims.borderWidth
+            // draw x axis
+            _drawLine(
+                { x: dims.left, y: dims.bottom },
+                { x: dims.right, y: dims.bottom },
+                ctx
+            )
+            // draw y axis
+            _drawLine(
+                { x: dims.left, y: dims.top },
+                { x: dims.left, y: dims.bottom },
+                ctx
+            )
+        })
     }
 
     const _drawXLegends = () => {
-        ctx.save()
-        ctx.fillStyle = theme.colors['grey-2']
-        ctx.font = '300 10px Roboto'
-        ctx.textAlign = 'center'
+        paintCanvas((ctx) => {
+            ctx.fillStyle = theme.colors['grey-2']
+            ctx.font = '300 10px Roboto'
+            ctx.textAlign = 'center'
 
-        // draw x Legends
-        graphData.forEach((point) => {
-            ctx.fillText(point.xLegend, point.x, dims.bottom + dims.offset * 2)
+            // draw x Legends
+            graphData.forEach((point) => {
+                ctx.fillText(
+                    point.xLegend,
+                    point.x,
+                    dims.bottom + dims.offset * 2
+                )
+            })
         })
-
-        ctx.restore()
     }
 
     const _drawBar = (p1, p2, opacityValue) => {
-        const grd = barCtx.createLinearGradient(p1.x, p1.y, p2.x, p2.y)
-        grd.addColorStop(0, theme.colors.blue + opacityValue)
-        grd.addColorStop(1, theme.colors.teal + opacityValue)
-        barCtx.lineWidth = dims.barWidth
-        barCtx.lineCap = 'round'
-        barCtx.strokeStyle = grd
-        _drawLine(p1, p2, barCtx)
-        barCtx.clearRect(
-            p2.x - barCtx.lineWidth / 2,
-            dims.bottom + dims.borderWidth,
-            barCtx.lineWidth,
-            barCtx.lineWidth / 2
-        )
+        paintBarCanvas((ctx) => {
+            const grd = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y)
+            grd.addColorStop(0, theme.colors.blue + opacityValue)
+            grd.addColorStop(1, theme.colors.teal + opacityValue)
+            ctx.lineWidth = dims.barWidth
+            ctx.lineCap = 'round'
+            ctx.strokeStyle = grd
+            _drawLine(p1, p2, ctx)
+            ctx.clearRect(
+                p2.x - ctx.lineWidth / 2,
+                dims.bottom + dims.borderWidth,
+                ctx.lineWidth,
+                ctx.lineWidth / 2
+            )
+        })
     }
 
     const _animateBars = () => {
-        barCtx.save()
         const tween = new Tween()
         graphData.forEach((point) => {
             const draw = (newVal) => {
@@ -142,65 +147,62 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
             }
             tween._play(dims.bottom, point.y, 700, draw)
         })
-        barCtx.restore()
     }
 
     const _isMouseOverBar = (x, y, p1, p2) => {
         const left = p1.x - dims.barWidth / 2,
             right = p1.x + dims.barWidth / 2,
             top = p1.y - dims.barWidth / 2,
-            bottom = dims.bottom
-        if (x > left && x < right && y > top && y < bottom) return true
-        return false
+            bottom = p2.y
+        return x > left && x < right && y > top && y < bottom
     }
 
     const _showHoverData = (event) => {
-        barCtx.save()
-        clearBarCanvas()
-        barCtx.fillStyle = theme.colors['foreground']
-        barCtx.font = '300 10px Roboto'
-        barCtx.textAlign = 'center'
-        let hoveredBar = null
-        graphData.forEach((point) => {
-            const p1 = { x: point.x, y: point.y }
-            const p2 = { x: point.x, y: dims.bottom }
-            const mouseOverBar = _isMouseOverBar(
-                event.offsetX,
-                event.offsetY,
-                p1,
-                p2
-            )
-            hoveredBar = mouseOverBar ? { p1, p2 } : hoveredBar
-        })
-        graphData.forEach((point) => {
-            const p1 = { x: point.x, y: point.y }
-            const p2 = { x: point.x, y: dims.bottom }
-            if (hoveredBar) {
-                if (
-                    p1.x === hoveredBar.p1.x &&
-                    p1.y === hoveredBar.p1.y &&
-                    p2.x === hoveredBar.p2.x &&
-                    p2.y === hoveredBar.p2.y
-                ) {
-                    _drawBar(p1, p2, Opacity100)
+        paintBarCanvas((ctx) => {
+            clearBarCanvas()
+            ctx.fillStyle = theme.colors['foreground']
+            ctx.font = '300 10px Roboto'
+            ctx.textAlign = 'center'
+            let hoveredBar = null
+            // check if hover or not
+            graphData.forEach((point) => {
+                const p1 = { x: point.x, y: point.y }
+                const p2 = { x: point.x, y: dims.bottom }
+                const mouseOverBar = _isMouseOverBar(
+                    event.offsetX,
+                    event.offsetY,
+                    p1,
+                    p2
+                )
+                hoveredBar = mouseOverBar ? { p1, p2 } : hoveredBar
+            })
+            // render bar as per hover
+            graphData.forEach((point) => {
+                const p1 = { x: point.x, y: point.y }
+                const p2 = { x: point.x, y: dims.bottom }
+                if (hoveredBar) {
+                    if (
+                        p1.x === hoveredBar.p1.x &&
+                        p1.y === hoveredBar.p1.y &&
+                        p2.x === hoveredBar.p2.x &&
+                        p2.y === hoveredBar.p2.y
+                    ) {
+                        _drawBar(p1, p2, Opacity100)
 
-                    barCtx.fillText(
-                        point.yLegend + yUnit,
-                        point.x,
-                        point.y - dims.offset * 2
-                    )
+                        ctx.fillText(
+                            point.yLegend + yUnit,
+                            point.x,
+                            point.y - dims.offset * 2
+                        )
+                    } else {
+                        _drawBar(p1, p2, Opacity25)
+                    }
                 } else {
-                    _drawBar(p1, p2, Opacity25)
+                    _drawBar(p1, p2, Opacity100)
                 }
-            } else {
-                _drawBar(p1, p2, Opacity100)
-            }
+            })
         })
-
-        barCtx.restore()
     }
-
-    // TODO: paintCtx, which encapsulates save/restore, and takes a callback
 
     const render = () => {
         clearCanvas()

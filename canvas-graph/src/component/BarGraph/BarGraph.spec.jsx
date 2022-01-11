@@ -53,8 +53,9 @@ describe('functional tests suite', () => {
             }
         )
     })
-    // figure a way to compare the actual output of graph data, from the hook
-    // all negative flows
+    // TODO: figure a way to compare the actual output of graph data, from the hook
+    // TODO: Add long string use case
+    // TODO: all negative flows
     it('should return empty array for no data', () => {
         mountHook(() => useData()).then((result) => {
             expect(result.current.graphData.length).to.equal(0)
