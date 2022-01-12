@@ -222,7 +222,7 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
                 barCtx.canvas.removeEventListener('mousemove', _showHoverData)
             }
         }
-    }, [barCtx])
+    }, [barCtx, theme])
 
     React.useEffect(() => {
         if (graphData.length) render()
