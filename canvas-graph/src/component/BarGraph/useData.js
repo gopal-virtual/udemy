@@ -9,7 +9,7 @@ function useData(data = [], xKey = '', yKey = '', dims = {}) {
     const range = React.useCallback((data, key) =>
         data.reduce((acc, point, i) => {
             if (i === 0) {
-                return { min: 0, max: point[key] }
+                return { min: point[key], max: point[key] }
             }
             return {
                 min: Math.min(acc.min, point[key]),
