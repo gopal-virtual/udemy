@@ -125,7 +125,7 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
             ctx.lineWidth = dims.barWidth
             ctx.lineCap = 'round'
             ctx.strokeStyle = grd
-            _drawLine({ x: p1.x, y: p1.y + ctx.lineWidth / 2 }, p2, ctx)
+            _drawLine(p1, p2, ctx)
             ctx.clearRect(
                 p2.x - ctx.lineWidth / 2,
                 dims.bottom + dims.borderWidth,
@@ -192,7 +192,7 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
                         ctx.fillText(
                             point.yLegend + yUnit,
                             point.x,
-                            point.y - dims.offset
+                            point.y - dims.offset * 2
                         )
                     } else {
                         _drawBar(p1, p2, Opacity25)
