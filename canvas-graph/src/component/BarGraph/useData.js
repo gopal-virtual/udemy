@@ -40,7 +40,7 @@ function useData(data = [], xKey = '', yKey = '', dims = {}) {
                 min,
                 max,
                 dims.padding,
-                dims.canvasH - dims.padding * 2
+                dims.canvasH - dims.padding
             ),
             xLegend: dataPoints[xKey],
             yLegend: dataPoints[yKey],
