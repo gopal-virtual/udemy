@@ -9,7 +9,6 @@ const CanvasWrapper = styled('div')({
     boxSizing: 'border-box',
     margin: '21px 0',
     width: '100%',
-    minWidth: '350px',
     height: '350px',
     position: 'relative',
 })
