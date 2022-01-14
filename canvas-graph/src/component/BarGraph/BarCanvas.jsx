@@ -213,18 +213,12 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
     }
 
     React.useEffect(() => {
-        if (barCtx) {
-            barCtx.canvas.addEventListener('mousemove', _showHoverData)
+        if (graphData.length) {
+            render()
+            barCtx?.canvas?.addEventListener?.('mousemove', _showHoverData)
         }
-        return () => {
-            if (barCtx) {
-                barCtx.canvas.removeEventListener('mousemove', _showHoverData)
-            }
-        }
-    }, [barCtx, theme])
-
-    React.useEffect(() => {
-        if (graphData.length) render()
+        return () =>
+            barCtx?.canvas?.removeEventListener?.('mousemove', _showHoverData)
     }, [graphData, theme])
 
     return <CanvasWrapper ref={canvasWrapperRef}></CanvasWrapper>
