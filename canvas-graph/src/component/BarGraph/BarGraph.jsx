@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { humanize } from '../../Utils/Utils'
 import BarCanvas from './BarCanvas'
 
 const TextSizeMap = {
@@ -41,28 +42,44 @@ const GraphWrapper = styled('div')({
     boxSizing: 'border-box',
     backgroundColor: (props) => props.theme.colors.background,
     padding: '25px',
-    minWidth: '400px',
+    minWidth: '450px',
     overflow: 'hidden',
 })
 
-const getGraphString = ({ data, yUnit }) => {
+const getGraphString = ({ data }) => {
     const lastMonthIndex = data.length - 1
-    const lastMonthSales = data[lastMonthIndex].sales + yUnit
+    const lastMonthSales = data[lastMonthIndex].sales
     const lastMonth =
         data[lastMonthIndex].month + ' ' + new Date().getFullYear()
     const delta = data[lastMonthIndex].sales - data[lastMonthIndex - 1].sales
     const deltaPrefix = delta > 0 ? `Up by` : `Down by`
-    const deltaString = delta + yUnit
+    const deltaString = humanize(delta)
 
     return {
-        lastMonthSales,
+        lastMonthSales: humanize(lastMonthSales),
         lastMonth,
         delta: { prefix: deltaPrefix, string: deltaString },
     }
 }
 
 function BarGraph(props) {
+    const [fontLoaded, setFontLoaded] = React.useState(false)
+
+    if (!props.data || !props.data.length) {
+        return (
+            <GraphWrapper data-testid="bar-wrapper">
+                <Text type="paragraph">No sales data available</Text>
+            </GraphWrapper>
+        )
+    }
+
     const { lastMonthSales, lastMonth, delta } = getGraphString(props)
+
+    document.fonts.ready.then(() => {
+        if (document.fonts.check('1em Roboto')) {
+            setFontLoaded(true)
+        }
+    })
 
     return (
         <GraphWrapper data-testid="bar-wrapper">
@@ -80,7 +97,7 @@ function BarGraph(props) {
                 </Text>
             </Text>
             <Separator />
-            <BarCanvas {...props} />
+            {fontLoaded && <BarCanvas {...props} />}
             <Text type="paragraph" weight="light" align="center" width="100%">
                 <Text type="paragraph" weight="light" color="red-pink">
                     {delta.prefix}

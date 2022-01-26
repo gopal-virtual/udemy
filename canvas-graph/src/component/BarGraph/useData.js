@@ -6,17 +6,23 @@ function useData(data = [], xKey = '', yKey = '', dims = {}) {
     const [minY, setMinY] = React.useState(0)
     const [maxY, setMaxY] = React.useState(0)
 
-    const range = React.useCallback((data, key) =>
-        data.reduce((acc, point, i) => {
-            if (i === 0) {
-                return { min: point[key], max: point[key] }
-            }
-            return {
-                min: Math.min(acc.min, point[key]),
-                max: Math.max(acc.max, point[key]),
-            }
-        }, {})
-    )
+    const range = React.useCallback((data, key) => {
+        const calcRange = data.reduce(
+            (acc, point) => {
+                return {
+                    min: Math.min(acc.min, point[key]),
+                    max: Math.max(acc.max, point[key]),
+                }
+            },
+            { min: data[0][key], max: data[0][key] }
+        )
+        return {
+            ...calcRange,
+            min:
+                calcRange.min -
+                Math.round(Math.abs(calcRange.max - calcRange.min) / 5), // add an offset of 1/5th of the difference
+        }
+    })
 
     const transposeData = React.useCallback((data) => {
         return data.map((point) => ({

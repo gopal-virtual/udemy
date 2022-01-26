@@ -16,7 +16,6 @@ const props = {
     data,
     yKey: 'sales',
     xKey: 'month',
-    yUnit: 'M',
 }
 const dims = {
     padding: 40,
@@ -28,7 +27,7 @@ describe('functional tests suite', () => {
     it('should calculate correct values of min/max y', () => {
         mountHook(() => useData(data, props.xKey, props.yKey, dims)).then(
             (result) => {
-                expect(result.current.minY).to.equal(0) // min value is zero irrespective of data min
+                expect(result.current.minY).to.equal(9)
                 expect(result.current.maxY).to.equal(16)
             }
         )
@@ -103,7 +102,7 @@ describe('visual tests suite', () => {
             </Provider>
         )
         cy.get('[data-testid="bar-sales-figure"]').contains(
-            data[data.length - 1].sales + props.yUnit
+            data[data.length - 1].sales
         )
     })
 
@@ -114,9 +113,7 @@ describe('visual tests suite', () => {
             </Provider>
         )
         cy.get('[data-testid="bar-delta-figure"]').contains(
-            data[data.length - 1].sales -
-                data[data.length - 2].sales +
-                props.yUnit
+            data[data.length - 1].sales - data[data.length - 2].sales
         )
     })
 })

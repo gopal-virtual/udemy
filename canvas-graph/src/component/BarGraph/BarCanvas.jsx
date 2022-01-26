@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { withTheme } from 'styled-components'
-import { map } from '../../Utils/Utils'
+import { humanize, map } from '../../Utils/Utils'
 import useCanvas from '../../hooks/useCanvas'
 import useData from './useData'
 import Tween from '../Tween/Tween'
@@ -16,7 +16,7 @@ const CanvasWrapper = styled('div')({
 const Opacity25 = '40'
 const Opacity100 = 'FF'
 
-function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
+function BarCanvas({ data, xKey, yKey, theme }) {
     const canvasWrapperRef = React.useRef(null)
     const [paintCanvas, clearCanvas, canvasW, canvasH] =
         useCanvas(canvasWrapperRef)
@@ -72,8 +72,8 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
                 const pointY = map(i, 0, interval, dims.bottom, dims.top)
                 const yLegend = map(i, 0, interval, minY, maxY, false)
                 ctx.fillText(
-                    `${yLegend.toFixed(1)}${yUnit || ''}`,
-                    dims.left - dims.offset,
+                    humanize(yLegend),
+                    dims.left - dims.offset / 2,
                     pointY
                 )
             }
@@ -127,7 +127,7 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
             _drawLine(p1, p2, ctx)
             ctx.clearRect(
                 p2.x - ctx.lineWidth / 2,
-                dims.bottom + dims.borderWidth,
+                dims.bottom,
                 ctx.lineWidth,
                 ctx.lineWidth / 2
             )
@@ -189,7 +189,7 @@ function BarCanvas({ data, xKey, yKey, yUnit, theme }) {
                         _drawBar(p1, p2, Opacity100)
 
                         ctx.fillText(
-                            point.yLegend + yUnit,
+                            humanize(point.yLegend),
                             point.x,
                             point.y - dims.offset * 2
                         )
