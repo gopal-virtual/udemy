@@ -41,8 +41,8 @@ const data_2 = [
     { sales: 1333, month: 'Jun' },
 ]
 
-export const withNegativeData = Template.bind({})
-withNegativeData.args = {
+export const WithNegativeData = Template.bind({})
+WithNegativeData.args = {
     data: data_2,
     yKey: 'sales',
     xKey: 'month',
@@ -57,8 +57,8 @@ const data_3 = [
     { sales: -133323, month: 'Jun' },
 ]
 
-export const withLongNumbers = Template.bind({})
-withLongNumbers.args = {
+export const WithLongNumbers = Template.bind({})
+WithLongNumbers.args = {
     data: data_3,
     yKey: 'sales',
     xKey: 'month',
@@ -79,8 +79,8 @@ const data_4 = [
     { sales: 123, month: 'Dec' },
 ]
 
-export const withHigherDataSet = Template.bind({})
-withHigherDataSet.args = {
+export const WithHigherDataSet = Template.bind({})
+WithHigherDataSet.args = {
     data: data_4,
     yKey: 'sales',
     xKey: 'month',

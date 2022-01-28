@@ -1,8 +1,18 @@
 import React from 'react'
+import { composeStories } from '@storybook/testing-react'
 import { mount, mountHook } from '@cypress/react'
 import BarGraph from './BarGraph'
 import Provider from '../Theme/Provider'
 import useData from './useData'
+import * as ComponentStories from './BarGraph.stories'
+
+const {
+    Default,
+    WithNegativeData,
+    WithLongNumbers,
+    WithHigherDataSet,
+    NoData,
+} = composeStories(ComponentStories)
 
 const data = [
     { sales: 14, month: 'Jan' },
@@ -27,7 +37,7 @@ describe('functional tests suite', () => {
     it('should calculate correct values of min/max y', () => {
         mountHook(() => useData(data, props.xKey, props.yKey, dims)).then(
             (result) => {
-                expect(result.current.minY).to.equal(9)
+                expect(result.current.minY).to.equal(8)
                 expect(result.current.maxY).to.equal(16)
             }
         )
@@ -66,16 +76,36 @@ describe('functional tests suite', () => {
 
 describe('visual tests suite', () => {
     it('should render light mode', () => {
-        mount(
-            <Provider mode="light">
-                <BarGraph {...props} />
-            </Provider>
-        )
+        mount(<Default />)
         cy.get('[data-testid="bar-wrapper"]').should(
             'have.css',
             'background-color',
             'rgb(253, 249, 243)'
         )
+        cy.wait(500)
+        cy.percySnapshot()
+    })
+
+    it('should render with negetive data set', () => {
+        mount(<WithNegativeData />)
+        cy.wait(500)
+        cy.percySnapshot()
+    })
+
+    it('should render with long data set', () => {
+        mount(<WithLongNumbers />)
+        cy.wait(500)
+        cy.percySnapshot()
+    })
+
+    it('should render with higher months', () => {
+        mount(<WithHigherDataSet />)
+        cy.wait(500)
+        cy.percySnapshot()
+    })
+
+    it('should render with no data', () => {
+        mount(<NoData />)
         cy.wait(500)
         cy.percySnapshot()
     })
