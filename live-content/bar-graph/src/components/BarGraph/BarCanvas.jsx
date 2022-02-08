@@ -11,6 +11,9 @@ const CanvasWrapper = styled('div')({
     position: 'relative',
 })
 
+// temp: we'll get rid of this once we deal with real data
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
+
 function BarCanvas({ theme }) {
     const canvasWrapperRef = React.useRef(null)
     const [
@@ -96,9 +99,6 @@ function BarCanvas({ theme }) {
             ctx.font = '400 11px Roboto'
             ctx.textAlign = 'center'
 
-            // temp: we'll get rid of this once we deal with real data
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
-
             months.forEach((point, index) => {
                 ctx.fillText(
                     point,
@@ -111,10 +111,47 @@ function BarCanvas({ theme }) {
         })
     })
 
+    const _drawBar = React.useCallback((p1, p2) => {
+        barCanvasPaint((ctx) => {
+            // set gradient color
+            const grd = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y)
+            grd.addColorStop(0, theme.colors.blue)
+            grd.addColorStop(1, theme.colors.teal)
+            ctx.lineWidth = dims.barWidth
+            ctx.lineCap = 'round'
+            ctx.strokeStyle = grd
+            // draw line
+            _drawLine(ctx, p1, p2)
+            // clear the rounding bottom
+            ctx.clearRect(
+                p2.x - ctx.lineWidth / 2,
+                dims.bottom,
+                ctx.lineWidth,
+                ctx.lineWidth / 2
+            )
+        })
+    })
+
+    const _plotBar = React.useCallback(() => {
+        months.forEach((point, index) => {
+            const pointX =
+                dims.left +
+                dims.offset * 2 +
+                index * ((dims.canvasW - dims.padding) / months.length)
+            const p1 = {
+                x: pointX,
+                y: Math.random() * dims.canvasH - dims.padding,
+            }
+            const p2 = { x: pointX, y: dims.bottom }
+            _drawBar(p1, p2)
+        })
+    })
+
     const render = React.useCallback(() => {
         clearBarCanvas()
         _drawCoordsPlane()
         _drawYLegands()
+        _plotBar()
         _drawXLegands()
     })
 
@@ -128,7 +165,7 @@ function BarCanvas({ theme }) {
             top: dims.padding,
             bottom: barCanvasH - dims.padding,
             borderWidth: 1,
-            barWidth: 14,
+            barWidth: 16,
         })
     }, [barCanvasW, barCanvasH])
 
