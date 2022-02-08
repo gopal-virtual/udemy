@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import useCanvas from './useCanvas'
 
 const CanvasWrapper = styled('div')({
     boxSizing: 'border-box',
@@ -11,7 +12,28 @@ const CanvasWrapper = styled('div')({
 })
 
 function BarCanvas() {
-    return <CanvasWrapper />
+    const canvasWrapperRef = React.useRef(null)
+    const [barCanvasContext, clearBarCanvas, barCanvasW, barCanvasH] =
+        useCanvas(canvasWrapperRef)
+
+    const _drawCoordsPlane = React.useCallback(() => {
+        barCanvasContext.beginPath()
+        barCanvasContext.moveTo(0, 0)
+        barCanvasContext.lineTo(100, 100)
+        barCanvasContext.stroke()
+    })
+
+    const render = React.useCallback(() => {
+        clearBarCanvas()
+        _drawCoordsPlane()
+    })
+
+    React.useEffect(() => {
+        if (barCanvasContext) {
+            render()
+        }
+    }, [barCanvasContext])
+    return <CanvasWrapper ref={canvasWrapperRef} />
 }
 
 export default BarCanvas
