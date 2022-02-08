@@ -8,17 +8,31 @@ function useCanvas(parentDom) {
     const initCanvas = React.useCallback(() => {
         const canvas = document.createElement('canvas')
 
-        canvas.width = canvasW
-        canvas.height = canvasH
+        const pixelRatio = window.devicePixelRatio
+        canvas.width = canvasW * pixelRatio
+        canvas.height = canvasH * pixelRatio
+        canvas.style.width = `${canvasW}px`
+        canvas.style.height = `${canvasH}px`
         canvas.style.position = 'absolute'
+
         const ctx = canvas.getContext('2d')
+        ctx.scale(pixelRatio, pixelRatio)
         parentDom.current.appendChild(canvas)
 
         setCtx(ctx)
         setCanvas(canvas)
     })
 
-    const clearCanvas = React.useCallback(() => {})
+    const paintCanvas = React.useCallback((callback) => {
+        ctx.save()
+        callback?.(ctx)
+        ctx.restore()
+    })
+
+    const clearCanvas = React.useCallback(() => {
+        ctx.clearRect(0, 0, canvasW, canvasH)
+    })
+
     const destroyCanvas = React.useCallback(() => {
         if (ctx) {
             setCtx(null)
@@ -44,7 +58,7 @@ function useCanvas(parentDom) {
         }
     }, [parentDom])
 
-    return [ctx, clearCanvas, canvasW, canvasH]
+    return [paintCanvas, clearCanvas, canvasW, canvasH, ctx]
 }
 
 export default useCanvas
