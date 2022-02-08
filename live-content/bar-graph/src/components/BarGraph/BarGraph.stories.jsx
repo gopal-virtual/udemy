@@ -1,10 +1,18 @@
 import React from 'react'
+import Provider from '../Theme/Provider'
 
 import BarGraph from './BarGraph'
 
 export default {
     title: 'Variants/Bar Graph',
     component: BarGraph,
+    decorators: [
+        (Story) => (
+            <Provider>
+                <Story />
+            </Provider>
+        ),
+    ],
 }
 
 const data = [

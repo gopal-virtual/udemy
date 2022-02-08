@@ -1,13 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
 import { humanize } from '../../Utils/Utils'
+import BarCanvas from './BarCanvas'
 
 const GraphWrapper = styled('div')({
     boxSizing: 'border-box',
     padding: '25px',
     minWidth: '450px',
     overflow: 'hidden',
-    backgroundColor: '#FDF9F3',
+    backgroundColor: (props) => props.theme.colors.background,
 })
 
 const textSizeMap = {
@@ -16,19 +17,15 @@ const textSizeMap = {
     legand: '11px',
 }
 
-const colorMap = {
-    'teal-blue': 'linear-gradient(270deg, #70DBD4 0%, #5297FF 100%)',
-    'red-pink': 'linear-gradient(180deg, #FF4A4A 0%, #FC5CFF 100%)',
-    foreground: '#000000',
-}
-
 const Text = styled('span')({
     display: 'inline-block',
-    fontFamily: 'sans-serif',
+    fontFamily: '"Roboto", sans-serif',
     fontSize: (props) => (props.type ? textSizeMap[props.type] : 'inherit'),
     fontWeight: (props) => (props.bold ? '600' : 'normal'),
     background: (props) =>
-        props.color ? colorMap[props.color] : colorMap['foreground'],
+        props.color
+            ? props.theme.colors[props.color]
+            : props.theme.colors.foreground,
     '-webkit-background-clip': 'text',
     color: 'transparent',
 })
@@ -38,7 +35,7 @@ const Separator = styled('div')({
     width: '29px',
     height: '7px',
     margin: '12px 0',
-    background: colorMap['teal-blue'],
+    background: (props) => props.theme.colors['teal-blue'],
 })
 
 const getGraphString = (data) => {
@@ -68,11 +65,13 @@ function BarGraph({ data }) {
                 <Text bold>{lastMonth}</Text>
             </Text>
             <Separator />
-            <div>canvas</div>
+            <BarCanvas />
             <Text type="paragraph">
-                {delta.prefix}{' '}
-                <Text bold color="red-pink">
-                    {delta.sales}
+                <Text color="red-pink">
+                    {delta.prefix}{' '}
+                    <Text bold color="red-pink">
+                        {delta.sales}
+                    </Text>
                 </Text>{' '}
                 sales from previous month
             </Text>
