@@ -19,7 +19,7 @@ export default {
 // but for calculation, we need to identify x and y axis data
 const data = [
     {
-        sales: 100000, // y value
+        sales: 900000, // y value
         month: 'Jan', // x value
     },
     {
@@ -27,7 +27,7 @@ const data = [
         month: 'Feb',
     },
     {
-        sales: 13343400,
+        sales: 1334340,
         month: 'Mar',
     },
     {
@@ -35,11 +35,11 @@ const data = [
         month: 'Apr',
     },
     {
-        sales: 80993430,
+        sales: 809930,
         month: 'May',
     },
     {
-        sales: 5034340,
+        sales: 503430,
         month: 'Jun',
     },
     {

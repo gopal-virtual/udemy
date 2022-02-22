@@ -57,8 +57,16 @@ const getGraphString = (data) => {
 }
 
 function BarGraph({ data, xKey, yKey }) {
+    const [fontLoaded, setFontLoaded] = React.useState(false)
     const { lastMonthSales, lastMonth, delta } = getGraphString(data)
     const canvasProps = { data, xKey, yKey }
+
+    document.fonts.ready.then(() => {
+        if (document.fonts.check('1em Roboto')) {
+            setFontLoaded(true)
+        }
+    })
+
     return (
         <GraphWrapper>
             <Text type="header">
@@ -66,7 +74,7 @@ function BarGraph({ data, xKey, yKey }) {
                 <Text bold>{lastMonth}</Text>
             </Text>
             <Separator />
-            <BarCanvas {...canvasProps} />
+            {fontLoaded && <BarCanvas {...canvasProps} />}
             <Text type="paragraph">
                 <Text color="red-pink">
                     {delta.prefix}{' '}

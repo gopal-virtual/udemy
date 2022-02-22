@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { withTheme } from 'styled-components'
-import { humanize } from '../../Utils/Utils'
+import { humanize, map } from '../../Utils/Utils'
 import useCanvas from './useCanvas'
 import useData from './useData'
 
@@ -85,11 +85,20 @@ function BarCanvas({ data, xKey, yKey, theme }) {
                         y: dims.bottom - intervalHeight * i,
                     }
                 )
+
+                const yIntervalLegand = map(i, 0, interval, minY, maxY)
+                const intervalYPoint = map(
+                    i,
+                    0,
+                    interval,
+                    dims.bottom,
+                    dims.top
+                )
                 // draw y legands
                 ctx.fillText(
-                    humanize(Math.random() * 20000),
-                    dims.left - dims.offset,
-                    dims.bottom - intervalHeight * i
+                    humanize(yIntervalLegand),
+                    dims.left - dims.offset / 2,
+                    intervalYPoint
                 )
             }
         })
@@ -101,12 +110,10 @@ function BarCanvas({ data, xKey, yKey, theme }) {
             ctx.font = '400 11px Roboto'
             ctx.textAlign = 'center'
 
-            months.forEach((point, index) => {
+            graphData.forEach((point, index) => {
                 ctx.fillText(
-                    point,
-                    dims.left +
-                        dims.offset * 2 +
-                        index * ((dims.canvasW - dims.padding) / months.length),
+                    point.xLegands,
+                    point.x,
                     dims.bottom + dims.offset * 2
                 )
             })
@@ -135,16 +142,12 @@ function BarCanvas({ data, xKey, yKey, theme }) {
     })
 
     const _plotBar = React.useCallback(() => {
-        months.forEach((point, index) => {
-            const pointX =
-                dims.left +
-                dims.offset * 2 +
-                index * ((dims.canvasW - dims.padding) / months.length)
+        graphData.forEach((point, index) => {
             const p1 = {
-                x: pointX,
-                y: Math.random() * dims.canvasH - dims.padding,
+                x: point.x,
+                y: point.y,
             }
-            const p2 = { x: pointX, y: dims.bottom }
+            const p2 = { x: point.x, y: dims.bottom }
             _drawBar(p1, p2)
         })
     })
@@ -172,10 +175,12 @@ function BarCanvas({ data, xKey, yKey, theme }) {
     }, [barCanvasW, barCanvasH])
 
     React.useEffect(() => {
-        if (barCanvasContext) {
+        // only render if data is ready
+        if (graphData.length) {
             render()
         }
-    }, [barCanvasContext])
+    }, [graphData])
+
     return <CanvasWrapper ref={canvasWrapperRef} />
 }
 

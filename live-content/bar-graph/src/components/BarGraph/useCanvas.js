@@ -6,6 +6,7 @@ function useCanvas(parentDom) {
     const [canvasH, setCanvasH] = React.useState(0)
 
     const initCanvas = React.useCallback(() => {
+        console.log('init canvas')
         const canvas = document.createElement('canvas')
 
         const pixelRatio = window.devicePixelRatio
@@ -24,13 +25,16 @@ function useCanvas(parentDom) {
     })
 
     const paintCanvas = React.useCallback((callback) => {
-        ctx.save()
-        callback?.(ctx)
-        ctx.restore()
+        console.log('paint canvas called')
+        if (ctx) {
+            ctx.save()
+            callback?.(ctx)
+            ctx.restore()
+        }
     })
 
     const clearCanvas = React.useCallback(() => {
-        ctx.clearRect(0, 0, canvasW, canvasH)
+        if (ctx) ctx.clearRect(0, 0, canvasW, canvasH)
     })
 
     const destroyCanvas = React.useCallback(() => {
@@ -57,6 +61,11 @@ function useCanvas(parentDom) {
             setDims()
         }
     }, [parentDom])
+
+    React.useEffect(() => {
+        window.addEventListener('resize', setDims)
+        return () => window.removeEventListener('resize', setDims)
+    }, [])
 
     return [paintCanvas, clearCanvas, canvasW, canvasH, ctx]
 }

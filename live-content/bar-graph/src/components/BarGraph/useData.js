@@ -6,7 +6,7 @@ function useData(data, xKey, yKey, dims) {
     const [minY, setMinY] = React.useState(0)
     const [maxY, setMaxY] = React.useState(0)
 
-    const setYRange = React.useCallback(() => {
+    const getYRange = React.useCallback(() => {
         const range = data.reduce(
             (acc, point) => {
                 return {
@@ -14,11 +14,10 @@ function useData(data, xKey, yKey, dims) {
                     max: Math.max(acc.max, point[yKey]),
                 }
             },
-            { min: 0, max: 0 }
+            { min: data[0][yKey], max: data[0][yKey] }
         )
 
-        setMinY(range.min)
-        setMaxY(range.max)
+        return range
     })
 
     // the input data follows cartesian coordinate system
@@ -26,19 +25,20 @@ function useData(data, xKey, yKey, dims) {
     // i.e. y axis is flipped.
     // SetData convert and transpose the data accordingly
     const setData = React.useCallback(() => {
+        const { min, max } = getYRange()
         // map the input data from one range to another
         const mappedData = data.map((dataPoints, index) => ({
             x: map(
                 index,
                 0,
                 data.length - 1,
-                dims.padding,
-                dims.canvasW - dims.padding
+                dims.padding * 2,
+                dims.canvasW - dims.padding * 2
             ),
             y: map(
                 dataPoints[yKey],
-                minY,
-                maxY,
+                min,
+                max,
                 dims.padding,
                 dims.canvasH - dims.padding
             ),
@@ -53,11 +53,13 @@ function useData(data, xKey, yKey, dims) {
         }))
 
         setGraphData(flippedData)
+        setMinY(min)
+        setMaxY(max)
     })
 
     React.useEffect(() => {
-        if (data && data.length && dims) {
-            setYRange()
+        // don't calc if h/w is zero
+        if (dims.canvasH && dims.canvasW) {
             setData()
         }
     }, [data, dims]) // recalc on change of dimensions / data itself
