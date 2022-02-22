@@ -56,8 +56,9 @@ const getGraphString = (data) => {
     }
 }
 
-function BarGraph({ data }) {
+function BarGraph({ data, xKey, yKey }) {
     const { lastMonthSales, lastMonth, delta } = getGraphString(data)
+    const canvasProps = { data, xKey, yKey }
     return (
         <GraphWrapper>
             <Text type="header">
@@ -65,7 +66,7 @@ function BarGraph({ data }) {
                 <Text bold>{lastMonth}</Text>
             </Text>
             <Separator />
-            <BarCanvas />
+            <BarCanvas {...canvasProps} />
             <Text type="paragraph">
                 <Text color="red-pink">
                     {delta.prefix}{' '}

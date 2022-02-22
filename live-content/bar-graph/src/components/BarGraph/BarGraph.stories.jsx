@@ -15,10 +15,12 @@ export default {
     ],
 }
 
+// we are dealing with user understandable data
+// but for calculation, we need to identify x and y axis data
 const data = [
     {
-        sales: 100000,
-        month: 'Jan',
+        sales: 100000, // y value
+        month: 'Jan', // x value
     },
     {
         sales: 1232400,
@@ -51,4 +53,6 @@ const Template = (args) => <BarGraph {...args} />
 export const Default = Template.bind({})
 Default.args = {
     data,
+    xKey: 'month',
+    yKey: 'sales',
 }

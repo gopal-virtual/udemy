@@ -17,3 +17,18 @@ export const humanize = (value) => {
             return sign + abs.toFixed(1)
     }
 }
+
+const norm = (val, min, max) => {
+    return (val - min) / (max - min)
+}
+
+const lerp = (norm, min, max) => {
+    return (max - min) * norm + min
+}
+
+// mapping val of range minA-maxA to range minB-maxB
+export const map = (val, minA, maxA, minB, maxB) => {
+    const n = norm(val, minA, maxA)
+    const l = lerp(n, minB, maxB)
+    return l
+}

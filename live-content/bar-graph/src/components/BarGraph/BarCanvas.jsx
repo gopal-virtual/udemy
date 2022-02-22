@@ -2,6 +2,7 @@ import React from 'react'
 import styled, { withTheme } from 'styled-components'
 import { humanize } from '../../Utils/Utils'
 import useCanvas from './useCanvas'
+import useData from './useData'
 
 const CanvasWrapper = styled('div')({
     boxSizing: 'border-box',
@@ -14,7 +15,7 @@ const CanvasWrapper = styled('div')({
 // temp: we'll get rid of this once we deal with real data
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 
-function BarCanvas({ theme }) {
+function BarCanvas({ data, xKey, yKey, theme }) {
     const canvasWrapperRef = React.useRef(null)
     const [
         barCanvasPaint,
@@ -27,6 +28,7 @@ function BarCanvas({ theme }) {
         padding: 40,
         offset: 10,
     })
+    const { graphData, minY, maxY } = useData(data, xKey, yKey, dims)
 
     const _drawLine = (ctx, p1, p2) => {
         ctx.beginPath()
