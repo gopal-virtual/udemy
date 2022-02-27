@@ -13,6 +13,9 @@ const CanvasWrapper = styled('div')({
     position: 'relative',
 })
 
+const Opacity100 = 'FF'
+const Opacity25 = '40'
+
 // temp: we'll get rid of this once we deal with real data
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 
@@ -123,12 +126,12 @@ function BarCanvas({ data, xKey, yKey, theme }) {
         })
     })
 
-    const _drawBar = React.useCallback((p1, p2) => {
+    const _drawBar = React.useCallback((p1, p2, opacity = Opacity100) => {
         barCanvasPaint((ctx) => {
             // set gradient color
             const grd = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y)
-            grd.addColorStop(0, theme.colors.blue)
-            grd.addColorStop(1, theme.colors.teal)
+            grd.addColorStop(0, theme.colors.blue + opacity)
+            grd.addColorStop(1, theme.colors.teal + opacity)
             ctx.lineWidth = dims.barWidth
             ctx.lineCap = 'round'
             ctx.strokeStyle = grd
@@ -156,6 +159,61 @@ function BarCanvas({ data, xKey, yKey, theme }) {
             tween.play(dims.bottom, point.y, 700, draw)
         })
     })
+
+    const _isMouseOverBar = (x, y, { top, bottom, left, right }) =>
+        x > left && x < right && y > top && y < bottom
+
+    const _showHoverData = (event) => {
+        barCanvasPaint((ctx) => {
+            clearBarCanvas()
+
+            ctx.fillStyle = theme.colors.foreground
+            ctx.font = '400 11px Roboto'
+            ctx.textAlign = 'center'
+
+            let hoveredBar = null
+
+            // check if mouse is hovering over a bar
+            for (let i = 0; i < graphData.length; i++) {
+                const point = graphData[i]
+                const bar = {
+                    left: point.x - dims.barWidth / 2,
+                    right: point.x + dims.barWidth / 2,
+                    top: point.y - dims.barWidth / 2,
+                    bottom: dims.bottom,
+                }
+                const mouseOverBar = _isMouseOverBar(
+                    event.offsetX,
+                    event.offsetY,
+                    bar
+                )
+                if (mouseOverBar) {
+                    hoveredBar = point
+                    break
+                }
+            }
+
+            // render bar as per hover
+            graphData.forEach((point) => {
+                const p1 = { x: point.x, y: point.y }
+                const p2 = { x: point.x, y: dims.bottom }
+                if (hoveredBar) {
+                    if (p1.x === hoveredBar.x && p1.y === hoveredBar.y) {
+                        _drawBar(p1, p2, Opacity100)
+                        ctx.fillText(
+                            humanize(point.yLegands),
+                            point.x,
+                            point.y - dims.offset * 2
+                        )
+                    } else {
+                        _drawBar(p1, p2, Opacity25)
+                    }
+                } else {
+                    _drawBar(p1, p2, Opacity100)
+                }
+            })
+        })
+    }
 
     const render = React.useCallback(() => {
         // draw bg
@@ -188,6 +246,15 @@ function BarCanvas({ data, xKey, yKey, theme }) {
         // only render if data is ready
         if (graphData.length) {
             render()
+            barCanvasContext?.canvas?.addEventListener?.(
+                'mousemove',
+                _showHoverData
+            )
+            return () =>
+                barCanvasContext?.canvas?.addEventListener?.(
+                    'mousemove',
+                    _showHoverData
+                )
         }
     }, [graphData])
 
