@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { withTheme } from 'styled-components'
 import { humanize, map } from '../../Utils/Utils'
+import Tween from '../Tween/Tween'
 import useCanvas from './useCanvas'
 import useData from './useData'
 
@@ -17,6 +18,8 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 
 function BarCanvas({ data, xKey, yKey, theme }) {
     const canvasWrapperRef = React.useRef(null)
+    const [bgCanvasPaint, clearBgCanvas, bgCanvasW, bgCanvasH, bgCtx] =
+        useCanvas(canvasWrapperRef)
     const [
         barCanvasPaint,
         clearBarCanvas,
@@ -38,7 +41,7 @@ function BarCanvas({ data, xKey, yKey, theme }) {
     }
 
     const _drawCoordsPlane = React.useCallback(() => {
-        barCanvasPaint((ctx) => {
+        bgCanvasPaint((ctx) => {
             // set border colors
             ctx.strokeStyle = theme.colors['grey-1']
             ctx.lineWidth = dims.borderWidth
@@ -58,7 +61,7 @@ function BarCanvas({ data, xKey, yKey, theme }) {
     })
 
     const _drawYLegands = React.useCallback(() => {
-        barCanvasPaint((ctx) => {
+        bgCanvasPaint((ctx) => {
             // set colors
             ctx.fillStyle = theme.colors['grey-2']
             ctx.strokeStyle = theme.colors['grey-1']
@@ -105,7 +108,7 @@ function BarCanvas({ data, xKey, yKey, theme }) {
     })
 
     const _drawXLegands = React.useCallback(() => {
-        barCanvasPaint((ctx) => {
+        bgCanvasPaint((ctx) => {
             ctx.fillStyle = theme.colors['grey-2']
             ctx.font = '400 11px Roboto'
             ctx.textAlign = 'center'
@@ -141,23 +144,30 @@ function BarCanvas({ data, xKey, yKey, theme }) {
         })
     })
 
-    const _plotBar = React.useCallback(() => {
-        graphData.forEach((point, index) => {
-            const p1 = {
-                x: point.x,
-                y: point.y,
+    const _animateBar = React.useCallback(() => {
+        const tween = new Tween()
+        graphData.forEach((point) => {
+            const draw = (newVal) => {
+                _drawBar(
+                    { x: point.x, y: newVal },
+                    { x: point.x, y: dims.bottom }
+                )
             }
-            const p2 = { x: point.x, y: dims.bottom }
-            _drawBar(p1, p2)
+            tween.play(dims.bottom, point.y, 700, draw)
         })
     })
 
     const render = React.useCallback(() => {
-        clearBarCanvas()
+        // draw bg
+        clearBgCanvas()
         _drawCoordsPlane()
         _drawYLegands()
-        _plotBar()
         _drawXLegands()
+
+        // draw bar
+        clearBarCanvas()
+        // _plotBar()
+        _animateBar()
     })
 
     React.useEffect(() => {

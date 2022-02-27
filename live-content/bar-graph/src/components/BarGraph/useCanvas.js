@@ -6,7 +6,6 @@ function useCanvas(parentDom) {
     const [canvasH, setCanvasH] = React.useState(0)
 
     const initCanvas = React.useCallback(() => {
-        console.log('init canvas')
         const canvas = document.createElement('canvas')
 
         const pixelRatio = window.devicePixelRatio
