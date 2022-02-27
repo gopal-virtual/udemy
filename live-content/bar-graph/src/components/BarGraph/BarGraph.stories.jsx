@@ -27,7 +27,7 @@ const data = [
         month: 'Feb',
     },
     {
-        sales: 1334340,
+        sales: 14340,
         month: 'Mar',
     },
     {

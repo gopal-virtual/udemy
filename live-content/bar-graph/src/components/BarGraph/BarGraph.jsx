@@ -38,6 +38,11 @@ const Separator = styled('div')({
     background: (props) => props.theme.colors['teal-blue'],
 })
 
+const Footer = styled('div')({
+    display: 'flex',
+    justifyContent: 'center',
+})
+
 const getGraphString = (data) => {
     const lastMonthIndex = data.length - 1
     const lastMonthSales = data[lastMonthIndex].sales
@@ -75,15 +80,17 @@ function BarGraph({ data, xKey, yKey }) {
             </Text>
             <Separator />
             {fontLoaded && <BarCanvas {...canvasProps} />}
-            <Text type="paragraph">
-                <Text color="red-pink">
-                    {delta.prefix}{' '}
-                    <Text bold color="red-pink">
-                        {delta.sales}
-                    </Text>
-                </Text>{' '}
-                sales from previous month
-            </Text>
+            <Footer>
+                <Text type="paragraph">
+                    <Text color="red-pink">
+                        {delta.prefix}{' '}
+                        <Text bold color="red-pink">
+                            {delta.sales}
+                        </Text>
+                    </Text>{' '}
+                    sales from previous month
+                </Text>
+            </Footer>
         </GraphWrapper>
     )
 }

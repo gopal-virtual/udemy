@@ -224,7 +224,6 @@ function BarCanvas({ data, xKey, yKey, theme }) {
 
         // draw bar
         clearBarCanvas()
-        // _plotBar()
         _animateBar()
     })
 

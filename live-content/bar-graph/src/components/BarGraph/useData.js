@@ -14,10 +14,13 @@ function useData(data, xKey, yKey, dims) {
                     max: Math.max(acc.max, point[yKey]),
                 }
             },
-            { min: data[0][yKey], max: data[0][yKey] }
+            { min: 0, max: data[0][yKey] }
         )
 
-        return range
+        return {
+            ...range,
+            min: range.min - Math.round(Math.abs(range.max - range.min) / 10),
+        }
     })
 
     // the input data follows cartesian coordinate system
