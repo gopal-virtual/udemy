@@ -61,8 +61,17 @@ const getGraphString = (data) => {
     }
 }
 
-function BarGraph({ data, xKey, yKey }) {
+function BarGraph({ data = [], xKey = '', yKey = '' }) {
     const [fontLoaded, setFontLoaded] = React.useState(false)
+
+    if (!data || !data.length) {
+        return (
+            <GraphWrapper>
+                <Text type="paragraph">No sales data available</Text>
+            </GraphWrapper>
+        )
+    }
+
     const { lastMonthSales, lastMonth, delta } = getGraphString(data)
     const canvasProps = { data, xKey, yKey }
 
